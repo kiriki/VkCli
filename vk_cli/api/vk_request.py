@@ -58,13 +58,13 @@ class VKRequest:
         if self.method_params_prepared is None:
             self.method_params_prepared = self.method_params.copy()
 
-            token = self.credentials.get_access_token()
+            token = self.credentials.access_token
 
             if token is not None:
                 self.method_params_prepared[vk_const.ACCESS_TOKEN] = token
 
             # Set actual version of API
-            self.method_params_prepared[vk_const.API_VERSION] = self.credentials.get_api_version()
+            self.method_params_prepared[vk_const.API_VERSION] = self.credentials.api_version
 
             # Set preferred language for request
             # self.mPreparedParameters.add(VKApiConst.LANG, getLang())

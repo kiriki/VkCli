@@ -16,17 +16,21 @@ class ApiCredentials(metaclass=Singleton):
     """
     credentials = {}
 
-    def set(self, credentials):
+    def set(self, credentials: dict):
         self.credentials = credentials
 
-    # @property
-    def get_access_token(self):
-        assert self.credentials
+    @property
+    def access_token(self):
+        assert self.credentials, \
+            'required to set credentials with "VKCredentials.set(CRED_DATA)"'
+
         return self.credentials.get(vk_const.ACCESS_TOKEN)
 
-    # @property
-    def get_api_version(self):
-        assert self.credentials
+    @property
+    def api_version(self):
+        assert self.credentials, \
+            'required to set credentials with "VKCredentials.set(CRED_DATA)"'
+
         return self.credentials.get(vk_const.API_VERSION)
 
 
