@@ -1,6 +1,7 @@
 # from .vk_privacy import VkPrivacy
 
 from .data import PhotoAlbumData
+from .lister import ModelLister
 from .vk_object import VKobjectOwned
 
 from .. import api
@@ -51,7 +52,7 @@ class VKPhotoAlbum(VKobjectOwned):
 
     @property
     def photos(self):
-        request = api.photos.get(owner_id=self.owner_id, album_id=self.album_id, rev=int(self.rev))
+        request = api.photos.get(owner_id=self.owner_id, album_id=self.album_id, rev=self.rev)
         return ModelLister(request, step=500)
 
     @property
