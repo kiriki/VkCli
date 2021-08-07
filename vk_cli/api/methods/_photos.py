@@ -252,7 +252,7 @@ class VKApiPhotos(VKApiBase):
         return cls.build_request('editComment', locals())
 
     @classmethod
-    @with_model('vk_cli.models.VKPhoto')
+    @with_model('VKPhoto')
     def get(cls, owner_id: int = None, album_id: str = None, photo_ids: str = None, rev: bool = None,
             extended: bool = None, feed_type: str = None, feed: int = None, photo_sizes: bool = None,
             offset: int = None, count: int = None):
@@ -295,7 +295,7 @@ class VKApiPhotos(VKApiBase):
         return cls.build_request('get', locals())
 
     @classmethod
-    @with_model('vk_cli.models.VKPhotoAlbum')
+    @with_model('VKPhotoAlbum')
     def get_albums(cls, owner_id: int = None, album_ids: object = None, offset: int = None, count: int = None,
                    need_system: bool = None, need_covers: bool = None, photo_sizes: bool = None):
         """
@@ -349,7 +349,7 @@ class VKApiPhotos(VKApiBase):
         return cls.build_request('getAlbumsCount', locals())
 
     @classmethod
-    @with_model('vk_cli.models.VKPhoto')
+    @with_model('VKPhoto')
     def get_all(cls, owner_id: int = None, extended: bool = None, offset: int = None, count: int = None,
                 photo_sizes: bool = None, no_service_albums: bool = None, need_hidden: bool = None,
                 skip_hidden: bool = None):
@@ -422,7 +422,7 @@ class VKApiPhotos(VKApiBase):
 
     @classmethod
     # @raw_result
-    @with_model('vk_cli.models.VKPhoto')
+    @with_model('VKPhoto')
     def get_by_id(cls, photos: str, extended: bool = None, photo_sizes: bool = None):
         """
         Возвращает информацию о фотографиях по их идентификаторам.

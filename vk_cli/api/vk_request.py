@@ -3,7 +3,7 @@ import logging
 import requests
 
 from . import vk_const
-from .misc import timer, get_class
+from .misc import timer, get_model_class
 from .vk_api_error import VKApiErrorFactory, VKApiError, VKApiAccessError
 from .vk_credentials import VKCredentials
 from .vk_response import VKResponse
@@ -172,7 +172,7 @@ class VKRequest:
         :param model_class_name:
         :return:
         """
-        self.binded_model = get_class(model_class_name)
+        self.binded_model = get_model_class(model_class_name)
 
 
 class PartialRequest(VKRequest):

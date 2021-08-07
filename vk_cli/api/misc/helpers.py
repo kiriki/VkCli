@@ -1,3 +1,6 @@
+import importlib
+
+
 def get_params(local_vars):
     params = {}
 
@@ -9,15 +12,19 @@ def get_params(local_vars):
     return params
 
 
-def get_class(kls):
+def get_model_class(cls_str):
     """
     Helper for VKApiX methods. Get class from its name
-    :param kls:
+    :param cls_str:
     :return:
     """
-    parts = kls.split('.')
-    module = '.'.join(parts[:-1])
-    m = __import__(module)
-    for comp in parts[1:]:
-        m = getattr(m, comp)
-    return m
+    models_package = '.models'
+
+    cls_name = cls_str.rpartition('.')[-1]
+    mod_name = cls_str.rpartition('.')[0]
+
+    parent_package = __package__.partition('.')[0]  # vk_cli
+
+    module = importlib.import_module(mod_name or models_package, package=parent_package)
+
+    return getattr(module, cls_name)
