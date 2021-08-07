@@ -1,4 +1,4 @@
-import vk_const
+from . import vk_const
 
 
 class Singleton(type):
