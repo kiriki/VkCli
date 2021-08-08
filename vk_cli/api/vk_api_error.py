@@ -1,4 +1,4 @@
-class VKApiError(Exception):
+class VKError(Exception):
     __slots__ = ['error']
 
     def __init__(self, error_data):
@@ -22,9 +22,9 @@ class VKApiError(Exception):
         return f"Error(code = '{self.code}', description = '{self.description}', params = '{self.params}')"
 
 
-class VKApiAccessError(VKApiError):
+class VKEAccessError(VKError):
     def __init__(self, error_data):
-        if isinstance(error_data, VKApiError):
+        if isinstance(error_data, VKError):
             super().__init__(error_data.error)
         else:
             super().__init__(error_data)
@@ -33,16 +33,32 @@ class VKApiAccessError(VKApiError):
         return f'[{self.code}] {self.description} params = \'{self.params}\''
 
 
-class VKApiInvalidUserId(VKApiError):
+class VKEInvalidUserId(VKError):
+    pass
+
+
+class VKECaptchaNeeded(VKError):
+    pass
+
+
+class VKETooFrequent(VKError):
+    pass
+
+
+class VKEInternal(VKError):
     pass
 
 
 class VKApiErrorFactory:
     errors = {
-        113: VKApiInvalidUserId
+        113: VKEInvalidUserId,
+        14: VKECaptchaNeeded,
+        6: VKETooFrequent,
+        7: VKEAccessError,
+        15: VKEAccessError,
     }
 
     @classmethod
     def get_exception(cls, data):
-        exception_cls = cls.errors.get(data['error_code'], VKApiError)
+        exception_cls = cls.errors.get(data['error_code'], VKError)
         return exception_cls(data)  # default

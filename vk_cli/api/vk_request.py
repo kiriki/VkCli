@@ -4,7 +4,7 @@ import requests
 
 from . import vk_const
 from .misc import timer, get_model_class
-from .vk_api_error import VKApiErrorFactory, VKApiError, VKApiAccessError
+from .vk_api_error import VKApiErrorFactory, VKError, VKECaptchaNeeded, VKETooFrequent, VKEInternal
 from .vk_credentials import VKCredentials
 from .vk_response import VKResponse
 
@@ -125,34 +125,32 @@ class VKRequest:
             try:
                 resp = requests.post(url, data=str_params)
                 resp.raise_for_status()
-
                 json_resp = resp.json()
                 try:
                     return json_resp['response']
                 except KeyError:
                     raise VKApiErrorFactory.get_exception(json_resp.get('error') or json_resp)
 
-            except VKApiError as e:
-                if e.code in (6, 10):  # если запросы отправляются слишком часто
-                    import time
-                    # time.sleep(.33)
-                    log.exception(e)
-                    log.info('sleep for 1 sec')
-                    time.sleep(1)
+            except (VKETooFrequent, VKEInternal) as e:
+                # если запросы отправляются слишком часто
+                import time
+                log.exception(e)
+                log.info('sleep for 1 sec')
+                time.sleep(1)
 
-                elif e.code == 14:  # требуется ввод кода с картинки
-                    captha_r = VKCapchaR(e.error['captcha_sid'], e.error['captcha_img'], self.method_name, **params)
-                    captha_r.show()
-                    captha_r.get_input()
-                    rr = captha_r.invoke_response(self.method_name, self.secure, **params)
-                    return rr
+            except VKECaptchaNeeded as e:
+                # требуется ввод кода с картинки
+                sid, img = e.error['captcha_sid'], e.error['captcha_img']
 
-                elif e.code in (7, 15):  # доступ запрещён
-                    raise VKApiAccessError(e)
+                captha_r = VKCapchaR(sid, img, self.method_name, params)
+                captha_r.show()
+                captha_r.get_input()
 
-                else:
-                    # logger_api.error(name, extra={'dict': pformat(response)})
-                    raise
+                rr = captha_r.invoke_response()
+                return rr
+
+            except VKError as e:
+                raise
 
     def invoke_response(self):
         return self._do_invoke()
@@ -209,3 +207,26 @@ class PartialRequest(VKRequest):
         else:
             res = ''
         return f'{self.method_name}: {self.method_params} \ninvoked = {self.is_invoked}{res}'
+
+
+class VKCapchaR(VKRequest):
+    def __init__(self, sid, ig_url, method, params):
+        super(VKCapchaR, self).__init__(method, params)
+        self.sid = sid
+        self.url = ig_url
+        self.answer_code = ''
+
+    def show(self):
+        import webbrowser
+
+        webbrowser.open(self.url)
+
+    def get_input(self):
+        self.answer_code = input('Enter a code from the image:')
+        print(self.answer_code)
+
+    def invoke_response(self):
+        self.method_params['captcha_sid'] = self.sid
+        self.method_params['captcha_key'] = self.answer_code
+
+        return super().invoke_response()

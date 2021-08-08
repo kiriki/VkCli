@@ -3,6 +3,7 @@ from unittest.mock import patch
 
 import vk_cli.api.vk_const as vk_const
 from tests.credentials import VK_CREDS
+from vk_cli.api.vk_api_error import VKECaptchaNeeded
 from vk_cli.api.vk_credentials import VKCredentials
 from vk_cli.api.vk_request import VKRequest
 from vk_cli.api.vk_response import VKResponse
@@ -104,7 +105,8 @@ class TestVKRequest(TestCase):
     @skip('skipping')
     def test_captcha(self):
         r = VKRequest('captcha.force')
-        r.invoke_response()
+        with self.assertRaises(VKECaptchaNeeded):
+            r.invoke_response()
 
     @skip('skipping')
     @patch('vk_cli.api.vk_request.VKRequest._do_invoke')

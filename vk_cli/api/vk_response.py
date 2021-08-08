@@ -1,6 +1,6 @@
 import datetime
 
-from .vk_api_error import VKApiError
+from .vk_api_error import VKError
 
 
 class VKEmptyResponse(Exception):
@@ -32,7 +32,7 @@ class VKResponse:
         elif isinstance(self.raw_data, list):
             self._items = self.raw_data
 
-        elif isinstance(self.raw_data, VKApiError):
+        elif isinstance(self.raw_data, VKError):
             self.error = self.raw_data
 
     def get_model_single(self):
