@@ -1,4 +1,5 @@
-from ._vkapi_base import VKApiBase, raw_result, with_model
+from ._vkapi_base import VKApiBase, raw_result, build_request
+from ..vk_request import VKRequest
 
 
 class VKApiPhotos(VKApiBase):
@@ -15,6 +16,7 @@ class VKApiPhotos(VKApiBase):
     # @with_model('vk_cli.models.VKModel')
     def confirm_tag(cls, photo_id: object, tag_id: int, owner_id: int = None):
         """
+        https://vk.com/dev/photos.confirmTag
         Подтверждает отметку на фотографии.
         После успешного выполнения возвращает 1.
 
@@ -252,7 +254,7 @@ class VKApiPhotos(VKApiBase):
         return cls.build_request('editComment', locals())
 
     @classmethod
-    @with_model('VKPhoto')
+    @build_request('get', with_model='VKPhoto')
     def get(cls, owner_id: int = None, album_id: str = None, photo_ids: str = None, rev: bool = None,
             extended: bool = None, feed_type: str = None, feed: int = None, photo_sizes: bool = None,
             offset: int = None, count: int = None):
@@ -292,35 +294,22 @@ class VKApiPhotos(VKApiBase):
         :param offset: отступ, необходимый для получения определенного подмножества записей.
         :param count: количество записей, которое будет получено. По умолчанию **50**, максимальное значение **1000**
         """
-        return cls.build_request('get', locals())
 
     @classmethod
-    @with_model('VKPhotoAlbum')
+    @build_request('getAlbums', with_model='VKPhotoAlbum')
     def get_albums(cls, owner_id: int = None, album_ids: object = None, offset: int = None, count: int = None,
-                   need_system: bool = None, need_covers: bool = None, photo_sizes: bool = None):
+                   need_system: bool = None, need_covers: bool = None, photo_sizes: bool = None) -> VKRequest:
         """
+        https://vk.com/dev/photos.getAlbums
         Возвращает список фотоальбомов пользователя или сообщества.
-        После успешного выполнения возвращает объект, содержащий число результатов в поле count и массив объектов,
-        описывающих альбомы, в поле items. Каждый из этих объектов содержит следующие поля:   id — идентификатор
-        альбома;  thumb_id — идентификатор фотографии, которая является обложкой (0, если обложка отсутствует);
-        owner_id — идентификатор владельца альбома;  title — название альбома;  description — описание альбома;
-        (не приходит для системных альбомов)  created — дата создания альбома в формате unixtime; (не приходит
-        для системных альбомов);  updated — дата последнего обновления альбома в формате unixtime; (не приходит
-        для системных альбомов);  size — количество фотографий в альбоме;  can_upload — 1, если текущий
-        пользователь может загружать фотографии в альбом (при запросе информации об альбомах сообщества);
-        privacy_view* — настройки приватности для альбома в формате настроек приватности (только для альбома
-        пользователя, не приходит для системных альбомов);  privacy_comment* — настройки приватности для альбома
-        в формате настроек приватности (только для альбома пользователя, не приходит для системных альбомов);
-        upload_by_admins_only* — кто может загружать фотографии в альбом (только для альбома сообщества, не
-        приходит для системных альбомов);  comments_disabled* — отключено ли комментирование альбома (только для
-        альбома сообщества, не приходит для системных альбомов);  thumb_src — ссылка на изображение обложки
-        альбома (если был указан параметр need_covers).   * — поля возвращаются только при запросе информации об
-        альбомах текущего пользователя или альбомах администрируемых им сообществ.
+        После успешного выполнения возвращает объект, содержащий число результатов в поле **count** и массив объектов,
+        описывающих альбомы, в поле **items**.
 
         :param owner_id: идентификатор пользователя или сообщества, которому принадлежат альбомы. Обратите внимание,
             идентификатор сообщества в параметре **owner_id** необходимо указывать со знаком "**-**" — например,
             **owner_id**=*-1* соответствует идентификатору сообщества ВКонтакте API (club1) По умолчанию идентификатор
             текущего пользователя
+
         :param album_ids: перечисленные через запятую идентификаторы альбомов.
         :param offset: смещение, необходимое для выборки определенного подмножества альбомов.
         :param count: количество альбомов, которое нужно вернуть. (по умолчанию возвращаются все альбомы)
@@ -332,7 +321,6 @@ class VKApiPhotos(VKApiBase):
         :param photo_sizes: *1* — размеры фотографий будут возвращены  в специальном формате. Может принимать значения
             **1** или **0**
         """
-        return cls.build_request('getAlbums', locals())
 
     @classmethod
     @raw_result
@@ -349,11 +337,12 @@ class VKApiPhotos(VKApiBase):
         return cls.build_request('getAlbumsCount', locals())
 
     @classmethod
-    @with_model('VKPhoto')
+    @build_request('getAll', with_model='VKPhoto')
     def get_all(cls, owner_id: int = None, extended: bool = None, offset: int = None, count: int = None,
                 photo_sizes: bool = None, no_service_albums: bool = None, need_hidden: bool = None,
                 skip_hidden: bool = None):
         """
+        https://vk.com/dev/photos.getAll
         Возвращает все фотографии пользователя или сообщества в антихронологическом порядке.
         После успешного выполнения возвращает список объектов photo.  Если был задан параметр extended=1, возвращаются
         дополнительные поля:   likes — количество отметок Мне нравится и информация о том, поставил ли лайк
@@ -421,8 +410,7 @@ class VKApiPhotos(VKApiBase):
         return cls.build_request('getAllComments', locals())
 
     @classmethod
-    # @raw_result
-    @with_model('VKPhoto')
+    @build_request('getById', with_model='VKPhoto')
     def get_by_id(cls, photos: str, extended: bool = None, photo_sizes: bool = None):
         """
         Возвращает информацию о фотографиях по их идентификаторам.
@@ -453,7 +441,6 @@ class VKApiPhotos(VKApiBase):
         :param photo_sizes: возвращать ли доступные размеры фотографии в специальном формате. Может принимать значения
             **1** или **0**
         """
-        return cls.build_request('getById', locals())
 
     @classmethod
     @raw_result

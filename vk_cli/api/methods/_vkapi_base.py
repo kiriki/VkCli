@@ -16,7 +16,8 @@ class VKApiBase(ABC):
     def build_request(cls, method_name, local_vars) -> VKRequest:
         """
         Формирование экземпляра VKRequest на основании имени метода и входных параметров
-        :param method_name:
+
+        :param method_name: API method name
         :param local_vars:
         """
         assert cls.method_group is not None, \
@@ -31,6 +32,7 @@ class VKApiBase(ABC):
 def raw_result(original_func):
     """
     исходный результат выполнения сформированного запроса
+
     :param original_func:
     :return:
     """
@@ -43,17 +45,21 @@ def raw_result(original_func):
     return wraped
 
 
-def with_model(class_name):
+def build_request(method_name: str, with_model: str = None):
     """
-    Привязка запроса к модели для получения экземпляров на основании результата запроса
-    :param class_name:
-    :return:
+    Create VKRequest with optional model binding for serial objects retrieving
+
+    :param method_name: VK API method name
+    :param with_model: model class name
+    :return: function
     """
 
     def wp_dec(api_function):
-        def wp_func(*args, **kwargs):
-            request = api_function(*args, **kwargs)
-            request.bind_model(class_name)
+        def wp_func(cls, **kwargs):
+            request = cls.build_request(method_name, kwargs)
+
+            if with_model is not None:
+                request.bind_model(with_model)
 
             return request
 
