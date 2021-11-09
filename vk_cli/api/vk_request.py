@@ -1,10 +1,18 @@
+from __future__ import annotations
+
 import logging
 
 import requests
 
 from . import vk_const
-from .misc import timer, get_model_class
-from .vk_api_error import VKApiErrorFactory, VKError, VKECaptchaNeeded, VKETooFrequent, VKEInternal
+from .misc import get_model_class, timer
+from .vk_api_error import (
+    VKApiErrorFactory,
+    VKECaptchaNeeded,
+    VKEInternal,
+    VKETooFrequent,
+    VKError,
+)
 from .vk_credentials import VKCredentials
 from .vk_response import VKResponse
 
@@ -27,7 +35,7 @@ class VKRequest:
         self.binded_model = None
 
     @classmethod
-    def from_request(cls, request):
+    def from_request(cls, request) -> VKRequest:
         pre = cls(method_name=None)
         pre._init_from_request(request)
         return pre
@@ -44,17 +52,17 @@ class VKRequest:
         return f'{self.method_name}({self.method_params}) [{inv}] {binding}'
 
     @property
-    def is_binded(self):
+    def is_binded(self) -> bool:
         return self.binded_model is not None
 
     @property
-    def is_invoked(self):
+    def is_invoked(self) -> bool:
         return self.response is not None
 
     def set_param(self, param, value):
         self.method_params[param] = value
 
-    def _prepared_parameters(self):
+    def _prepared_parameters(self) -> dict:
         if self.method_params_prepared is None:
             self.method_params_prepared = self.method_params.copy()
 
@@ -155,7 +163,7 @@ class VKRequest:
     def invoke_response(self):
         return self._do_invoke()
 
-    def get_invoke_result(self, update=False):
+    def get_invoke_result(self, update=False) -> VKResponse:
         """
         Результат выполнения запроса
         :return:

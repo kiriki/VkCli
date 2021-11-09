@@ -1,5 +1,11 @@
-from ._vkapi_base import VKApiBase, raw_result, build_request
+from typing import Union
+
 from ..vk_request import VKRequest
+from ._vkapi_base import (
+    VKApiBase,
+    build_request,
+    raw_result,
+)
 
 
 class VKApiPhotos(VKApiBase):
@@ -255,7 +261,7 @@ class VKApiPhotos(VKApiBase):
 
     @classmethod
     @build_request('get', with_model='VKPhoto')
-    def get(cls, owner_id: int = None, album_id: str = None, photo_ids: str = None, rev: bool = None,
+    def get(cls, owner_id: int = None, album_id: Union[int, str] = None, photo_ids: str = None, rev: bool = None,
             extended: bool = None, feed_type: str = None, feed: int = None, photo_sizes: bool = None,
             offset: int = None, count: int = None):
         """
@@ -271,7 +277,8 @@ class VKApiPhotos(VKApiBase):
 
         :param owner_id: идентификатор владельца альбома. Обратите внимание, идентификатор сообщества в параметре
             **owner_id** необходимо указывать со знаком "**-**" — например, **owner_id**=*-1* соответствует
-            идентификатору сообщества ВКонтакте API (club1) По умолчанию идентификатор текущего пользователя
+            идентификатору сообщества ВКонтакте API (club1)
+            По умолчанию идентификатор текущего пользователя
         :param album_id: идентификатор альбома. Для служебных альбомов используются следующие идентификаторы:
             *wall* — фотографии со стены;
             *profile* — фотографии профиля;

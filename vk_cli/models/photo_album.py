@@ -1,10 +1,12 @@
-# from .vk_privacy import VkPrivacy
+from typing import Iterator
 
+from .. import api
+from . import VKPhoto
 from .data import PhotoAlbumData
 from .lister import ModelLister
 from .vk_object import VKobjectOwned
 
-from .. import api
+# from .vk_privacy import VkPrivacy
 
 
 class VKPhotoAlbum(VKobjectOwned):
@@ -43,12 +45,11 @@ class VKPhotoAlbum(VKobjectOwned):
 
         return VKPhotoAlbum.from_data(result.single)
 
-    def __iter__(self):
+    def __iter__(self) -> Iterator[VKPhoto]:
         """
         Проход по всем фото в альбоме
         """
-        for photo in self.photos:
-            yield photo
+        yield from self.photos
 
     @property
     def photos(self):
@@ -120,11 +121,11 @@ class VKPhotoAlbum(VKobjectOwned):
         """
         return self.vk_data.description
 
-    @property
-    def privacy_view(self):
-        if self._privacy_view is None:
-            self._privacy_view = VkPrivacy(self.vk_data.privacy_view)
-        return self._privacy_view
+    # @property
+    # def privacy_view(self):
+    #     if self._privacy_view is None:
+    #         self._privacy_view = VkPrivacy(self.vk_data.privacy_view)
+    #     return self._privacy_view
 
     @property
     def created(self):

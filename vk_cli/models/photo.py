@@ -1,9 +1,9 @@
 import os
 from datetime import datetime
 
+from .. import api
 from .data import PhotoData
 from .vk_object import VKobjectOwned
-from .. import api
 
 
 class VKPhoto(VKobjectOwned):
