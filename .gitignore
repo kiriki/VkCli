@@ -1,2 +1,4 @@
 .idea
+.python-version
+
 /tests/credentials.py

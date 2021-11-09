@@ -1,0 +1,28 @@
+[tool.poetry]
+name = "VK API Client"
+version = "0.1.0"
+description = "vk.com API wrapper (yet another)"
+authors = ["kiriki <kiriciri@gmail.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.9"
+requests = "^2.26.0"
+dacite = "^1.6.0"
+
+[tool.poetry.dev-dependencies]
+isort = "^5.9.3"
+
+[tool.isort]
+profile = "pycharm"
+sections = ["FUTURE", "STDLIB", "THIRDPARTY", "FIRSTPARTY", "LOCALFOLDER"]
+case_sensitive = true
+lines_after_imports = -1
+lines_between_sections = 1
+group_by_package = true
+no_lines_before = []
+include_trailing_comma = true
+force_grid_wrap = 3
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
