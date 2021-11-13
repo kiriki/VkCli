@@ -1,5 +1,7 @@
 from . import vk_const
 
+DEFAULT_API_VERSION = '5.131'
+
 
 class Singleton(type):
     _instances = {}
@@ -31,7 +33,14 @@ class ApiCredentials(metaclass=Singleton):
         assert self.credentials, \
             'required to set credentials with "VKCredentials.set(CRED_DATA)"'
 
-        return self.credentials.get(vk_const.API_VERSION)
+        return self.credentials.get(vk_const.API_VERSION, DEFAULT_API_VERSION)
+
+    @property
+    def lang(self):
+        assert self.credentials, \
+            'required to set credentials with "VKCredentials.set(CRED_DATA)"'
+
+        return self.credentials.get(vk_const.LANG)
 
 
 # singleton параметры доступа к vk api

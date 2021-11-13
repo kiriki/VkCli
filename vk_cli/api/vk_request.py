@@ -20,22 +20,21 @@ log = logging.getLogger(__name__)
 
 
 class VKRequest:
+    URL_BASE = 'https://api.vk.com/method/'
     attempts = 1  # By default there is 1 attempt for loading
-    method_params = {}
-    method_params_prepared = None
-
     credentials = VKCredentials
 
-    def __init__(self, method_name, parameters=None, **pars):
+    def __init__(self, method_name: str = None, parameters: dict = None, **pars):
         self.method_name = method_name
-        self.method_params = parameters or self.method_params
+        self.method_params = parameters or {}
         self.method_params = {**self.method_params, **pars}
 
+        self._method_params_prepared = None
         self.response = None
         self.binded_model = None
 
     @classmethod
-    def from_request(cls, request) -> VKRequest:
+    def from_request(cls, request: VKRequest) -> VKRequest:
         pre = cls(method_name=None)
         pre._init_from_request(request)
         return pre
@@ -62,33 +61,53 @@ class VKRequest:
     def set_param(self, param, value):
         self.method_params[param] = value
 
+    @property
     def _prepared_parameters(self) -> dict:
-        if self.method_params_prepared is None:
-            self.method_params_prepared = self.method_params.copy()
+        if self._method_params_prepared is None:
+            self._method_params_prepared = self.method_params.copy()
 
-            token = self.credentials.access_token
-
-            if token is not None:
-                self.method_params_prepared[vk_const.ACCESS_TOKEN] = token
+            if self.credentials.access_token is not None:
+                self._method_params_prepared[vk_const.ACCESS_TOKEN] = self.credentials.access_token
 
             # Set actual version of API
-            self.method_params_prepared[vk_const.API_VERSION] = self.credentials.api_version
+            self._method_params_prepared[vk_const.API_VERSION] = self.credentials.api_version
 
             # Set preferred language for request
-            # self.mPreparedParameters.add(VKApiConst.LANG, getLang())
+            if self.credentials.lang:
+                self._method_params_prepared[vk_const.LANG] = self.credentials.lang
 
-            # If request is secure, we need all urls as https
-            self.method_params_prepared[vk_const.HTTPS] = "1"
+        return self._method_params_prepared
 
-            # if token is not None & token.secret is not None:
-            # # If it not, generate signature of request
-            # sig = generateSig(token)
-            # self.mPreparedParameters.add('sig', sig)  # VKApiConst.SIG, sig
+    @property
+    def _str_prepared_parameters(self) -> dict[str:str]:
+        """
+        filter out empty values, cast values to str
+        :return:
+        """
+        str_params = {}
 
-            # From that moment you cannot modify parameters.
-            # Specially for http loading
+        for k, v in self._prepared_parameters.items():
+            if v is None:
+                continue
 
-        return self.method_params_prepared
+            # cast params
+            if isinstance(v, bool):
+                str_params[k] = int(v)
+            elif isinstance(v, list) or isinstance(v, set):
+                str_params[k] = ','.join(map(str, v))
+            else:
+                str_params[k] = v
+
+        str_params = {
+            k: str(v).encode('utf-8')
+            for k, v in str_params.items()
+        }
+
+        return str_params
+
+    @property
+    def url(self) -> str:
+        return self.URL_BASE + self.method_name
 
     def invoke(self):
         """
@@ -112,26 +131,9 @@ class VKRequest:
         log.debug('_do_invoke')
         log.info(f'* {self.method_name}: {self.method_params}')
 
-        params = self.method_params
-
-        for k, w in params.items():  # cast params
-            if isinstance(w, bool):
-                params[k] = int(w)
-            elif isinstance(w, list) or isinstance(w, set):
-                params[k] = ','.join(map(str, w))
-
-        self.method_params = {k: v for k, v in params.items() if v is not None}
-
-        str_params = {}
-        prepared = self._prepared_parameters()
-
-        for k, v in prepared.items():
-            str_params[k] = str(v).encode('utf-8')
-
-        url = 'https://api.vk.com/method/' + self.method_name
         while True:
             try:
-                resp = requests.post(url, data=str_params)
+                resp = requests.post(self.url, data=self._str_prepared_parameters)
                 resp.raise_for_status()
                 json_resp = resp.json()
                 try:
@@ -150,12 +152,11 @@ class VKRequest:
                 # требуется ввод кода с картинки
                 sid, img = e.error['captcha_sid'], e.error['captcha_img']
 
-                captha_r = VKCapchaR(sid, img, self.method_name, params)
+                captha_r = VKCapchaR(sid, img, self.method_name, self._prepared_parameters)
                 captha_r.show()
                 captha_r.get_input()
 
-                rr = captha_r.invoke_response()
-                return rr
+                return captha_r.invoke_response()
 
             except VKError as e:
                 raise
@@ -220,14 +221,15 @@ class PartialRequest(VKRequest):
 class VKCapchaR(VKRequest):
     def __init__(self, sid, ig_url, method, params):
         super(VKCapchaR, self).__init__(method, params)
+
         self.sid = sid
-        self.url = ig_url
+        self.capcha_url = ig_url
         self.answer_code = ''
 
     def show(self):
         import webbrowser
 
-        webbrowser.open(self.url)
+        webbrowser.open(self.capcha_url)
 
     def get_input(self):
         self.answer_code = input('Enter a code from the image:')

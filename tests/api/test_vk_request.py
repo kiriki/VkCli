@@ -26,6 +26,7 @@ class TestVKRequest(TestCase):
             'count': 33,
             'offset': 44,
             'extended': True,
+            'none_param': None,
         }
 
     @patch('vk_cli.api.vk_request.VKRequest._do_invoke')
@@ -93,11 +94,10 @@ class TestVKRequest(TestCase):
 
     def test_get_prepared_parameters(self):
         request = VKRequest(self.TEST_METHOD_NAME, **self.params_dict)
-        prepared = request._prepared_parameters()
+        prepared = request._prepared_parameters
 
         self.assertIn(vk_const.ACCESS_TOKEN, prepared)
         self.assertIn(vk_const.API_VERSION, prepared)
-        self.assertIn(vk_const.HTTPS, prepared)
 
         for key in self.params_dict.keys():
             self.assertIn(key, prepared)

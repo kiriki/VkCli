@@ -4,6 +4,7 @@ ACCESS_TOKEN = 'access_token'
 ACCESS_TOKEN_SECURE = 'access_token_secure'
 API_VERSION = 'v'
 HTTPS = 'https'
+LANG = 'lang'
 
 PLATFORM_UNKNOWN = 0
 PLATFORM_MOBILE = 1  # Мобильная версия сайта или неопознанное мобильное приложение

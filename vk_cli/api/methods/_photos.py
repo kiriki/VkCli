@@ -418,7 +418,7 @@ class VKApiPhotos(VKApiBase):
 
     @classmethod
     @build_request('getById', with_model='VKPhoto')
-    def get_by_id(cls, photos: str, extended: bool = None, photo_sizes: bool = None):
+    def get_by_id(cls, photos: str, extended: bool = None, photo_sizes: bool = None) -> VKRequest:
         """
         Возвращает информацию о фотографиях по их идентификаторам.
         После успешного выполнения возвращает массив объектов photo.  Если к фотографии прикреплено местоположение,
