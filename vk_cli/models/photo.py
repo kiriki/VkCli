@@ -10,6 +10,7 @@ class VKPhoto(VKobjectOwned):
     """
     Фотография ВК. Представление фотографии на сайте vk.com
     """
+
     type = 'photo'
     vk_data_class = PhotoData
 
@@ -38,9 +39,11 @@ class VKPhoto(VKobjectOwned):
         return {i.type: i for i in self.vk_data.sizes}
 
     def out_html(self):
-        rr = (f'<a href="https://vk.com/photo{self.vk_data.owner_id}_{self.vk_data.id}">'
-              f'<img src="{self.vk_data.photo_max}"><br />'
-              '</a>\r\n')
+        rr = (
+            f'<a href="https://vk.com/photo{self.vk_data.owner_id}_{self.vk_data.id}">'
+            f'<img src="{self.vk_data.photo_max}"><br />'
+            '</a>\r\n'
+        )
         return rr
 
     def delete(self):
@@ -58,6 +61,7 @@ class VKPhoto(VKobjectOwned):
         :return:
         """
         from urllib.request import urlopen
+
         fname = self.as_attachment
 
         if isinstance(name_counter, int):
@@ -82,8 +86,11 @@ class VKPhoto(VKobjectOwned):
         if self.sizes:  # новый формат
             if size_fmt is None:
                 sizez = 'smxopqryzw'[::-1]
-                size = next(self.sizes.get(s_l) for s_l in sizez if hasattr(self.sizes.get(s_l), 'url') and
-                            self.sizes.get(s_l).url)
+                size = next(
+                    self.sizes.get(s_l)
+                    for s_l in sizez
+                    if hasattr(self.sizes.get(s_l), 'url') and self.sizes.get(s_l).url
+                )
             elif isinstance(size_fmt, tuple):
                 size = self.sizes.get(size_fmt[0]) or self.sizes.get('x')
             else:
@@ -101,9 +108,7 @@ class VKPhoto(VKobjectOwned):
     def get_comments_data(self):
         # return super(VKPhoto, self).get_comments_data()
 
-        comments_data = api.photos.get_comments(self.vk_data.id,
-                                                owner_id=self.vk_data.owner_id,
-                                                need_likes=True)
+        comments_data = api.photos.get_comments(self.vk_data.id, owner_id=self.vk_data.owner_id, need_likes=True)
         return comments_data
 
     @property

@@ -15,7 +15,7 @@ class VKObjectData:
             type_hooks={
                 datetime.datetime: datetime.datetime.fromtimestamp,
                 bool: bool,
-                int: int
+                int: int,
             }
         )
 

@@ -41,6 +41,7 @@ class VKRequest:
 
     def _init_from_request(self, request):
         from copy import deepcopy
+
         self.__dict__ = deepcopy(request.__dict__)
 
     def __str__(self) -> str:
@@ -98,10 +99,7 @@ class VKRequest:
             else:
                 str_params[k] = v
 
-        str_params = {
-            k: str(v).encode('utf-8')
-            for k, v in str_params.items()
-        }
+        str_params = {k: str(v).encode('utf-8') for k, v in str_params.items()}
 
         return str_params
 
@@ -144,6 +142,7 @@ class VKRequest:
             except (VKETooFrequent, VKEInternal) as e:
                 # если запросы отправляются слишком часто
                 import time
+
                 log.exception(e)
                 log.info('sleep for 1 sec')
                 time.sleep(1)

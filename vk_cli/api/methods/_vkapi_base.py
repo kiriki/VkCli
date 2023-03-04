@@ -10,7 +10,7 @@ class VKApiBase(ABC):
 
     def __init__(self):
         class_name = self.__class__.__name__
-        self.method_group = class_name.lower()[len(self.cls_name_prefix):]
+        self.method_group = class_name.lower()[len(self.cls_name_prefix) :]
 
     @classmethod
     def build_request(cls, method_name, local_vars) -> VKRequest:
@@ -20,8 +20,7 @@ class VKApiBase(ABC):
         :param method_name: API method name
         :param local_vars:
         """
-        assert cls.method_group is not None, \
-            f"is required to set 'method_group' value for class '{cls.__name__}'"
+        assert cls.method_group is not None, f"is required to set 'method_group' value for class '{cls.__name__}'"
 
         method_group_name = '.'.join(filter(lambda a: a, [cls.method_group, method_name]))
         params = get_params(local_vars)

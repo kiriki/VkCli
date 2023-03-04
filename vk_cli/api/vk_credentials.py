@@ -16,6 +16,7 @@ class ApiCredentials(metaclass=Singleton):
     """
     Параметры доступа к api vk.com
     """
+
     credentials = {}
 
     def set(self, credentials: dict):
@@ -23,22 +24,19 @@ class ApiCredentials(metaclass=Singleton):
 
     @property
     def access_token(self):
-        assert self.credentials, \
-            'required to set credentials with "VKCredentials.set(CRED_DATA)"'
+        assert self.credentials, 'required to set credentials with "VKCredentials.set(CRED_DATA)"'
 
         return self.credentials.get(vk_const.ACCESS_TOKEN)
 
     @property
     def api_version(self):
-        assert self.credentials, \
-            'required to set credentials with "VKCredentials.set(CRED_DATA)"'
+        assert self.credentials, 'required to set credentials with "VKCredentials.set(CRED_DATA)"'
 
         return self.credentials.get(vk_const.API_VERSION, DEFAULT_API_VERSION)
 
     @property
     def lang(self):
-        assert self.credentials, \
-            'required to set credentials with "VKCredentials.set(CRED_DATA)"'
+        assert self.credentials, 'required to set credentials with "VKCredentials.set(CRED_DATA)"'
 
         return self.credentials.get(vk_const.LANG)
 

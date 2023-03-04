@@ -11,6 +11,7 @@ class VKResponse:
     """
     Presenting answer from API
     """
+
     error = None
 
     def __init__(self, request, raw_data):

@@ -5,8 +5,7 @@ def get_params(local_vars):
     params = {}
 
     for key, value in local_vars.items():
-        if value is not None and \
-                key not in ('cls', 'self'):
+        if value is not None and key not in ('cls', 'self'):
             params[key.strip('_')] = value
 
     return params

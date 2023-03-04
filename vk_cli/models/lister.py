@@ -29,14 +29,17 @@ class ModelLister:
         return self.partial_generator.total
 
     def __str__(self):
-        return f'[{self.partial_generator.request.binded_model.__name__}] {self.count} items ' \
-               f'({self.count // self.partial_generator.step} pages by {self.partial_generator.step})'
+        return (
+            f'[{self.partial_generator.request.binded_model.__name__}] {self.count} items '
+            f'({self.count // self.partial_generator.step} pages by {self.partial_generator.step})'
+        )
 
 
 class PartialRequestsGenerator:
     """
     Используется для получения уточнённых запросов с указанным шагом
     """
+
     offset = 0
 
     def __init__(self, request, step):

@@ -7,9 +7,8 @@ from .vk_object_data import VKOwnedObjectData
 
 @dataclass
 class PhotoAlbumData(VKOwnedObjectData):
-    """
+    """ """
 
-    """
     id: int  # идентификатор альбома;
     owner_id: int  # идентификатор владельца альбома;
     thumb_id: int  # идентификатор фотографии, которая является обложкой (0, если обложка отсутствует);
