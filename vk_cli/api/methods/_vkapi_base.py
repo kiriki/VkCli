@@ -8,7 +8,7 @@ class VKApiBase(ABC):
     method_group = None
     cls_name_prefix = 'VKApi'
 
-    def __init__(self):
+    def __init__(self) -> None:
         class_name = self.__class__.__name__
         self.method_group = class_name.lower()[len(self.cls_name_prefix) :]
 

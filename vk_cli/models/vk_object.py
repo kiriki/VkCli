@@ -14,7 +14,7 @@ class VKobject(metaclass=ABCMeta):
     class InvalidObjectId(Exception):
         pass
 
-    def __init__(self, string_or_object_id):
+    def __init__(self, string_or_object_id) -> None:
         self._id = None
         self.vk_data = None
 
@@ -108,7 +108,7 @@ class VKobject(metaclass=ABCMeta):
 class VKobjectOwned(VKobject, metaclass=ABCMeta):
     _owner_id = None
 
-    def __init__(self, string_id=None, owner_id=None, object_id=None):
+    def __init__(self, string_id=None, owner_id=None, object_id=None) -> None:
         super().__init__(string_id or object_id)
         self._owner_id = self._owner_id or owner_id
 

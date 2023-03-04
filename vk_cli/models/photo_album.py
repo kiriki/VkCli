@@ -15,7 +15,7 @@ class VKPhotoAlbum(VKobjectOwned):
     do_stat = False
     system_albums = {-6: '0', -7: '00', -15: '000'}
 
-    def __init__(self, string_id=None, object_id=None, owner_id=None):
+    def __init__(self, string_id=None, object_id=None, owner_id=None) -> None:
         super().__init__(string_id=string_id, owner_id=owner_id, object_id=object_id)
 
         self._likes_count = -1

@@ -7,7 +7,7 @@ class ModelLister:
     параметров offset и count
     """
 
-    def __init__(self, request, step=200):
+    def __init__(self, request, step=200) -> None:
         assert request.is_binded
 
         self.partial_generator = PartialRequestsGenerator(request, step)
@@ -42,7 +42,7 @@ class PartialRequestsGenerator:
 
     offset = 0
 
-    def __init__(self, request, step):
+    def __init__(self, request, step) -> None:
         self.request = request  # base request
         self.step = step  # items per request
         self._p_requests = {}

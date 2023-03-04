@@ -14,7 +14,7 @@ class VKResponse:
 
     error = None
 
-    def __init__(self, request, raw_data):
+    def __init__(self, request, raw_data) -> None:
         self.request = request  # source request (VKRequest)
         self.raw_data = raw_data
 

@@ -1,7 +1,7 @@
 class VKError(Exception):
     __slots__ = ['error']
 
-    def __init__(self, error_data):
+    def __init__(self, error_data) -> None:
         self.error = error_data
         super().__init__(self, str(self))
 
@@ -23,7 +23,7 @@ class VKError(Exception):
 
 
 class VKEAccessError(VKError):
-    def __init__(self, error_data):
+    def __init__(self, error_data) -> None:
         if isinstance(error_data, VKError):
             super().__init__(error_data.error)
         else:

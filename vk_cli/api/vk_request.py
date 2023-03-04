@@ -21,10 +21,10 @@ log = logging.getLogger(__name__)
 
 class VKRequest:
     URL_BASE = 'https://api.vk.com/method/'
-    attempts = 1  # By default there is 1 attempt for loading
+    attempts = 1  # By default, there is 1 attempt for loading
     credentials = VKCredentials
 
-    def __init__(self, method_name: str = None, parameters: dict = None, **pars):
+    def __init__(self, method_name: str = None, parameters: dict = None, **pars) -> None:
         self.method_name = method_name
         self.method_params = parameters or {}
         self.method_params = {**self.method_params, **pars}
@@ -80,7 +80,7 @@ class VKRequest:
         return self._method_params_prepared
 
     @property
-    def _str_prepared_parameters(self) -> dict[str:str]:
+    def _str_prepared_parameters(self) -> dict[str, str]:
         """
         filter out empty values, cast values to str
         :return:
@@ -185,7 +185,7 @@ class PartialRequest(VKRequest):
     offset = None
     count = None
 
-    def __init__(self, request, step, offset):
+    def __init__(self, request, step, offset) -> None:
         super().__init__(None)
         self._init_from_request(request)
         # self.response = None
@@ -215,7 +215,7 @@ class PartialRequest(VKRequest):
 
 
 class VKCapchaR(VKRequest):
-    def __init__(self, sid, ig_url, method, params):
+    def __init__(self, sid, ig_url, method, params) -> None:
         super().__init__(method, params)
 
         self.sid = sid
