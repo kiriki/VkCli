@@ -15,19 +15,28 @@ requests = "^2.28.2"
 dacite = "^1.6.0"
 
 [tool.poetry.group.dev.dependencies]
-isort = "^5.12.0"
+pre-commit = "^3.1.1"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
 
 [tool.isort]
 profile = "pycharm"
 sections = ["FUTURE", "STDLIB", "THIRDPARTY", "FIRSTPARTY", "LOCALFOLDER"]
 case_sensitive = true
 lines_after_imports = -1
-lines_between_sections = 1
-group_by_package = true
-no_lines_before = []
+#lines_between_sections = 1
+#lines_between_types = 1
+#group_by_package = true
+#no_lines_before = []
 include_trailing_comma = true
-force_grid_wrap = 3
+ensure_newline_before_comments = false
+#multi_line_output = 5
+force_grid_wrap = 4
 
-[build-system]
-requires = ["poetry-core>=1.0.0"]
-build-backend = "poetry.core.masonry.api"
+[tool.black]
+line-length = 120
+skip-string-normalization = true
+target-version = ['py310']
+preview = true

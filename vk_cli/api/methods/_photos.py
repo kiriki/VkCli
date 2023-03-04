@@ -1,11 +1,7 @@
 from typing import Union
 
 from ..vk_request import VKRequest
-from ._vkapi_base import (
-    VKApiBase,
-    build_request,
-    raw_result,
-)
+from ._vkapi_base import VKApiBase, build_request, raw_result
 
 
 class VKApiPhotos(VKApiBase):
