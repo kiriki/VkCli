@@ -1,4 +1,4 @@
-from typing import Iterator
+from collections.abc import Iterator
 
 from .. import api
 from . import VKPhoto
@@ -16,7 +16,7 @@ class VKPhotoAlbum(VKobjectOwned):
     system_albums = {-6: '0', -7: '00', -15: '000'}
 
     def __init__(self, string_id=None, object_id=None, owner_id=None):
-        super(VKPhotoAlbum, self).__init__(string_id=string_id, owner_id=owner_id, object_id=object_id)
+        super().__init__(string_id=string_id, owner_id=owner_id, object_id=object_id)
 
         self._likes_count = -1
         self._privacy_view = None

@@ -94,7 +94,7 @@ class VKRequest:
             # cast params
             if isinstance(v, bool):
                 str_params[k] = int(v)
-            elif isinstance(v, list) or isinstance(v, set):
+            elif isinstance(v, list | set):
                 str_params[k] = ','.join(map(str, v))
             else:
                 str_params[k] = v
@@ -157,7 +157,7 @@ class VKRequest:
 
                 return captha_r.invoke_response()
 
-            except VKError as e:
+            except VKError:
                 raise
 
     def invoke_response(self):
@@ -210,16 +210,13 @@ class PartialRequest(VKRequest):
             self.response = None
 
     def __str__(self):
-        if self.is_invoked:
-            res = f' [{self.response.count} items]'
-        else:
-            res = ''
+        res = f' [{self.response.count} items]' if self.is_invoked else ''
         return f'{self.method_name}: {self.method_params} \ninvoked = {self.is_invoked}{res}'
 
 
 class VKCapchaR(VKRequest):
     def __init__(self, sid, ig_url, method, params):
-        super(VKCapchaR, self).__init__(method, params)
+        super().__init__(method, params)
 
         self.sid = sid
         self.capcha_url = ig_url

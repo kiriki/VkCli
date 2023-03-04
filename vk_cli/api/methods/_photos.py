@@ -1,5 +1,3 @@
-from typing import Union
-
 from ..vk_request import VKRequest
 from ._vkapi_base import VKApiBase, build_request, raw_result
 
@@ -294,7 +292,7 @@ class VKApiPhotos(VKApiBase):
     def get(
         cls,
         owner_id: int = None,
-        album_id: Union[int, str] = None,
+        album_id: int | str = None,
         photo_ids: str = None,
         rev: bool = None,
         extended: bool = None,

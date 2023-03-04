@@ -99,7 +99,7 @@ class TestVKRequest(TestCase):
         self.assertIn(vk_const.ACCESS_TOKEN, prepared)
         self.assertIn(vk_const.API_VERSION, prepared)
 
-        for key in self.params_dict.keys():
+        for key in self.params_dict:
             self.assertIn(key, prepared)
 
     @skip('skipping')

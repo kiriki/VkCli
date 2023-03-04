@@ -1,6 +1,5 @@
 import datetime
 from dataclasses import dataclass
-from typing import Optional
 
 from .vk_object_data import VKOwnedObjectData
 
@@ -13,32 +12,32 @@ class PhotoAlbumData(VKOwnedObjectData):
     owner_id: int  # идентификатор владельца альбома;
     thumb_id: int  # идентификатор фотографии, которая является обложкой (0, если обложка отсутствует);
     title: str  # название альбома;
-    description: Optional[str]  # описание альбома; (не приходит для системных альбомов)
-    created: Optional[datetime.datetime]
+    description: str | None  # описание альбома; (не приходит для системных альбомов)
+    created: datetime.datetime | None
     # дата создания альбома в формате unixtime; (не приходит для системных альбомов);
 
-    updated: Optional[datetime.datetime]
+    updated: datetime.datetime | None
     # дата последнего обновления альбома в формате unixtime; (не приходит для системных альбомов);
 
     size: int  # количество фотографий в альбоме;
-    can_upload: Optional[bool]
+    can_upload: bool | None
     # 1, если текущий пользователь может загружать фотографии в альбом (при запросе информации об альбомах сообщества);
 
-    privacy_view: Optional[dict]
+    privacy_view: dict | None
     # настройки приватности для альбома в формате настроек приватности (только для альбома пользователя, не приходит
     # для системных альбомов);
 
-    privacy_comment: Optional[dict]
+    privacy_comment: dict | None
     # настройки приватности для альбома в формате настроек приватности (только для альбома пользователя, не приходит
     # для системных альбомов);
 
-    upload_by_admins_only: Optional[bool]
+    upload_by_admins_only: bool | None
     # кто может загружать фотографии в альбом (только для альбома сообщества, не приходит для системных альбомов);
 
-    comments_disabled: Optional[bool]
+    comments_disabled: bool | None
     # отключено ли комментирование альбома (только для альбома сообщества, не приходит для системных альбомов);
 
-    thumb_src: Optional[str]  # ссылка на изображение обложки альбома (если был указан параметр need_covers).
+    thumb_src: str | None  # ссылка на изображение обложки альбома (если был указан параметр need_covers).
 
-    user_id: Optional[int]  # идентификатор пользователя, загрузившего фото (если фотография размещена в сообществе).
+    user_id: int | None  # идентификатор пользователя, загрузившего фото (если фотография размещена в сообществе).
     # Для фотографий, размещенных от имени сообщества, user_id = 100.

@@ -60,7 +60,7 @@ class VKobject(metaclass=ABCMeta):
         To override
         получение JSON-данных для единичного объекта с сервера vk
         """
-        raise NotImplemented
+        raise NotImplementedError
 
     def open(self):
         """
