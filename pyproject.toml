@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "VK API Client"
+name = "vk-api-client"
 version = "0.1.1"
 description = "vk.com API wrapper (yet another)"
 authors = ["kiriki <kiriciri@gmail.com>"]
