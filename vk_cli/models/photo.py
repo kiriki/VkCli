@@ -1,7 +1,8 @@
 import os
 from datetime import datetime
 
-from .. import api
+from vk_cli import api
+
 from .data import PhotoData
 from .vk_object import VKobjectOwned
 
@@ -11,7 +12,7 @@ class VKPhoto(VKobjectOwned):
     Фотография ВК. Представление фотографии на сайте vk.com
     """
 
-    type = 'photo'
+    vk_object_type = 'photo'
     vk_data_class = PhotoData
 
     size_vars = (2560, 1280, 807, 604, 130, 75)
@@ -50,7 +51,6 @@ class VKPhoto(VKobjectOwned):
         """
         Удаление фотографии
         """
-        pass
 
     def download(self, folder, name_counter=None, size_fmt=None):
         """
@@ -106,8 +106,6 @@ class VKPhoto(VKobjectOwned):
                 raise TypeError('size_fmt None or tuple allowed ')
 
     def get_comments_data(self):
-        # return super(VKPhoto, self).get_comments_data()
-
         comments_data = api.photos.get_comments(self.vk_data.id, owner_id=self.vk_data.owner_id, need_likes=True)
         return comments_data
 

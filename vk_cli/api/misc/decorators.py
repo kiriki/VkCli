@@ -7,7 +7,6 @@ def unimplemented(fn):
     def new(*args):
         print('Sorry! This method is not implemented yet.')
         raise NotImplementedError
-        # return fn(*args)
 
     return new
 

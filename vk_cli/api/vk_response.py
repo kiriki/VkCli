@@ -109,3 +109,4 @@ class VKResponse:
     def get_number(self):
         if self.is_number:
             return self.raw_data
+        return None

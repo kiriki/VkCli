@@ -1,4 +1,4 @@
-from ..api.vk_request import PartialRequest
+from vk_cli.api.vk_request import PartialRequest
 
 
 class ModelLister:

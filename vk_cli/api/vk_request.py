@@ -24,7 +24,7 @@ class VKRequest:
     attempts = 1  # By default, there is 1 attempt for loading
     credentials = VKCredentials
 
-    def __init__(self, method_name: str = None, parameters: dict = None, **pars) -> None:
+    def __init__(self, method_name: str | None = None, parameters: dict | None = None, **pars) -> None:
         self.method_name = method_name
         self.method_params = parameters or {}
         self.method_params = {**self.method_params, **pars}
@@ -48,7 +48,7 @@ class VKRequest:
         inv = ('stub', 'invoked')[self.is_invoked]
         binding = ''
         if self.binded_model:
-            binding = f'--> \'{self.binded_model.__name__}\''
+            binding = f"--> '{self.binded_model.__name__}'"
         return f'{self.method_name}({self.method_params}) [{inv}] {binding}'
 
     @property
@@ -188,7 +188,6 @@ class PartialRequest(VKRequest):
     def __init__(self, request, step, offset) -> None:
         super().__init__(None)
         self._init_from_request(request)
-        # self.response = None
 
         self.set_offset(offset)
         self.set_count(step)

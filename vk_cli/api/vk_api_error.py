@@ -30,7 +30,7 @@ class VKEAccessError(VKError):
             super().__init__(error_data)
 
     def __str__(self):
-        return f'[{self.code}] {self.description} params = \'{self.params}\''
+        return f"[{self.code}] {self.description} params = '{self.params}'"
 
 
 class VKEInvalidUserId(VKError):

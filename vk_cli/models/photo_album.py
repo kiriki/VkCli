@@ -1,16 +1,15 @@
 from collections.abc import Iterator
 
-from .. import api
+from vk_cli import api
+
 from . import VKPhoto
 from .data import PhotoAlbumData
 from .lister import ModelLister
 from .vk_object import VKobjectOwned
 
-# from .vk_privacy import VkPrivacy
-
 
 class VKPhotoAlbum(VKobjectOwned):
-    type = 'album'
+    vk_object_type = 'album'
     vk_data_class = PhotoAlbumData
     do_stat = False
     system_albums = {-6: '0', -7: '00', -15: '000'}
@@ -82,7 +81,6 @@ class VKPhotoAlbum(VKobjectOwned):
 
         with codecs.open(file, 'w', encoding='utf-8') as ifile:
             for photo in self:
-                # ifile.write(photo._get_largest_url()+'\r\n')
                 ifile.write(photo.out_html())
 
     def delete(self):
@@ -124,8 +122,6 @@ class VKPhotoAlbum(VKobjectOwned):
     # @property
     # def privacy_view(self):
     #     if self._privacy_view is None:
-    #         self._privacy_view = VkPrivacy(self.vk_data.privacy_view)
-    #     return self._privacy_view
 
     @property
     def created(self):
@@ -153,25 +149,24 @@ class VKPhotoAlbum(VKobjectOwned):
             return -1
 
     @property
-    def likes_count(self):
+    def likes_count(self) -> int:
         if self.do_stat and self._likes_count == -1:
             self._likes_count = sum([p.like.count for p in self])
 
         return self._likes_count
 
     @property
-    def url(self):
+    def url(self) -> str:
         url_base = super().url
         owner = self.vk_data.owner_id
         album = self.vk_data.id
         if album in self.system_albums:
             album = self.system_albums[album]
 
-        strid = f'{self.type}{owner}_{album}'
-        url = f'{url_base}{strid}'
-        return url
+        strid = f'{self.vk_object_type}{owner}_{album}'
+        return f'{url_base}{strid}'
 
-    def __str__(self):
+    def __str__(self) -> str:
         if self.do_stat:
             out = f'[pl:{self.size}/{self.likes_count} - {self.like_index}] {self.title} ({self.url})'
         else:

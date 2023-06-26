@@ -1,7 +1,7 @@
 from abc import ABC
 
-from ..misc import get_params
-from ..vk_request import VKRequest
+from vk_cli.api.misc import get_params
+from vk_cli.api.vk_request import VKRequest
 
 
 class VKApiBase(ABC):
@@ -44,7 +44,7 @@ def raw_result(original_func):
     return wraped
 
 
-def build_request(method_name: str, with_model: str = None):
+def build_request(method_name: str, with_model: str | None = None):
     """
     Create VKRequest with optional model binding for serial objects retrieving
 

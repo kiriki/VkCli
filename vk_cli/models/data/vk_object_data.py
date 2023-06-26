@@ -15,7 +15,7 @@ class VKObjectData:
                 datetime.datetime: datetime.datetime.fromtimestamp,
                 bool: bool,
                 int: int,
-            }
+            },
         )
 
 
