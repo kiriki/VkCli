@@ -11,8 +11,8 @@ credentials = {
 
 VKCredentials.set(credentials)
 
-album = VKPhotoAlbum(owner_id=1, object_id=-7).open()
+album = VKPhotoAlbum(owner_id=1, object_id=-7).load()
 print(album)
 
-album.download(dl_folder='/home/user/tmp/vkdls')
+album.download(dl_path='/home/user/tmp/vkdls')
 ```

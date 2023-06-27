@@ -16,10 +16,20 @@ dacite = "^1.6.0"
 
 [tool.poetry.group.dev.dependencies]
 pre-commit = "^3.1.1"
+pytest = "^7.4.0"
+pytest-env = "^0.8.2"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.pytest.ini_options]
+minversion = "7.0"
+addopts = "-ra --strict-markers"
+testpaths = [
+    "tests",
+    "integration",
+]
 
 [tool.isort]
 profile = "pycharm"

@@ -1,5 +1,5 @@
-import os
 from datetime import datetime
+from pathlib import Path
 
 from vk_cli import api
 
@@ -18,16 +18,18 @@ class VKPhoto(VKobjectOwned):
     size_vars = (2560, 1280, 807, 604, 130, 75)
     size_vars_old = ('w', 'z', 'y', 'x', 'm', 's')
 
-    def _get_vk_data(self):
+    vk_data: PhotoData | None
+
+    def _get_vk_data(self) -> dict:
         request = api.photos.get_by_id(photos=self.string_id, photo_sizes=None, extended=True)
         result = request.get_invoke_result()
         return result.single
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return self.url
 
     @property
-    def url(self):
+    def url(self) -> str:
         url_base = 'https://vk.com/photo'
         return f'{url_base}{self.owner_id}_{self.id}'
 
@@ -39,7 +41,7 @@ class VKPhoto(VKobjectOwned):
         """
         return {i.type: i for i in self.vk_data.sizes}
 
-    def out_html(self):
+    def out_html(self) -> str:
         rr = (
             f'<a href="https://vk.com/photo{self.vk_data.owner_id}_{self.vk_data.id}">'
             f'<img src="{self.vk_data.photo_max}"><br />'
@@ -47,18 +49,17 @@ class VKPhoto(VKobjectOwned):
         )
         return rr
 
-    def delete(self):
+    def delete(self) -> None:
         """
         Удаление фотографии
         """
 
-    def download(self, folder, name_counter=None, size_fmt=None):
+    def download(self, folder: Path, name_counter=None, size_fmt=None) -> bool:
         """
         Скачивание графического файла в указанную папку
         :param folder: папка назначения
         :param name_counter: опциональный счётчик для использования в имени файла
         :param size_fmt: формат размера по умолчанию максимальный 'max'
-        :return:
         """
         from urllib.request import urlopen
 
@@ -67,21 +68,21 @@ class VKPhoto(VKobjectOwned):
         if isinstance(name_counter, int):
             fname = f'{name_counter:04d}. {fname}.jpg'
 
-        fname_full = os.path.join(folder, fname)
+        fname_full = folder / fname
 
-        if os.path.isfile(fname_full):  # skip exists
-            return
+        if fname_full.is_file():  # skip exists
+            return True
 
-        with open(fname_full, 'wb') as f:
+        with fname_full.open('wb') as f:
             url = self.get_image_url(size_fmt)
             u = urlopen(url)
             f.write(u.read())
+        return fname_full.exists()
 
-    def get_image_url(self, size_fmt=None):
+    def get_image_url(self, size_fmt=None) -> str:
         """
         Ссылка на jpg заданного размера
         :param size_fmt: формат размера, если не указан используется максимальный
-        :return:
         """
         if self.sizes:  # новый формат
             if size_fmt is None:
@@ -110,8 +111,8 @@ class VKPhoto(VKobjectOwned):
         return comments_data
 
     @property
-    def date(self):
-        return datetime.fromtimestamp(self.vk_data.date)
+    def date(self) -> datetime:
+        return self.vk_data.date
 
     @property
     def photo_max(self):
@@ -121,6 +122,6 @@ class VKPhoto(VKobjectOwned):
             return None
 
     @property
-    def as_attachment(self):
+    def as_attachment(self) -> str:
         # <type><owner_id>_<media_id>
-        return f'{self.type}{self.owner_id}_{self.id}'
+        return f'{self.vk_object_type}{self.owner_id}_{self.id}'

@@ -1,7 +1,8 @@
 from collections.abc import Iterator
+from pathlib import Path
+from typing import Self
 
 from vk_cli import api
-
 from . import VKPhoto
 from .data import PhotoAlbumData
 from .lister import ModelLister
@@ -11,10 +12,11 @@ from .vk_object import VKobjectOwned
 class VKPhotoAlbum(VKobjectOwned):
     vk_object_type = 'album'
     vk_data_class = PhotoAlbumData
+    vk_data: PhotoAlbumData | None
     do_stat = False
     system_albums = {-6: '0', -7: '00', -15: '000'}
 
-    def __init__(self, string_id=None, object_id=None, owner_id=None) -> None:
+    def __init__(self, string_id: str = None, object_id: int = None, owner_id: int = None) -> None:
         super().__init__(string_id=string_id, owner_id=owner_id, object_id=object_id)
 
         self._likes_count = -1
@@ -22,27 +24,26 @@ class VKPhotoAlbum(VKobjectOwned):
         self._privacy_comment = None
         self.rev = False
 
-    def _get_vk_data(self):
+    def _get_vk_data(self) -> dict:
         # todo выделить в поле get_request?
         request = api.photos.get_albums(owner_id=self.owner_id, album_ids=self.album_id)
         a = request.get_invoke_result()
         return a.single
 
-    @staticmethod
-    def create(title, description='', group_id=None):
+    @classmethod
+    def create(cls, title: str, description: str = '', group_id: int = None) -> Self:
         """
         Создаёт новый пустой альбом для фотографий на сайте VK.com
         :param description: описание альбома
         :param title: название альбома
         :param group_id: идентификатор сообщества, в котором создаётся альбом
-        :rtype: VKPhotoAlbum
         """
         # todo privacy
 
         request = api.photos.create_album(title=title, group_id=group_id, description=description)
         result = request.get_invoke_result()
 
-        return VKPhotoAlbum.from_data(result.single)
+        return cls.from_data(result.single)
 
     def __iter__(self) -> Iterator[VKPhoto]:
         """
@@ -51,29 +52,25 @@ class VKPhotoAlbum(VKobjectOwned):
         yield from self.photos
 
     @property
-    def photos(self):
+    def photos(self) -> ModelLister:
         request = api.photos.get(owner_id=self.owner_id, album_id=self.album_id, rev=self.rev)
         return ModelLister(request, step=500)
 
     @property
-    def is_editable(self):
+    def is_editable(self) -> bool:
         return self.vk_data.privacy_view is not None
 
-    def download(self, dl_folder):
+    def download(self, dl_path: str | Path) -> None:
         """
         Скачивает фотографии из альбома в папку dl_folder
-        :param dl_folder:
         """
-        import os
-
-        dl_folder = os.path.join(dl_folder, self._get_dl_folder_name())
-        if not os.path.exists(dl_folder):
-            os.makedirs(dl_folder)
-
+        dl_path = Path(dl_path)
+        dl_path = dl_path / self._get_dl_folder_name()
+        dl_path.mkdir(parents=True, exist_ok=True)
         for i, photo in enumerate(self, 1):
-            photo.download(dl_folder, i)
+            photo.download(dl_path, i)
 
-    def _get_dl_folder_name(self):
+    def _get_dl_folder_name(self) -> str:
         return f'{self.owner_id}_{self.album_id} ({self.title})'
 
     def dl_file(self, file):
@@ -97,23 +94,23 @@ class VKPhotoAlbum(VKobjectOwned):
         return api.photos.edit_album(album_id=self.album_id, owner_id=self.owner_id, **kwargs)
 
     @property
-    def album_id(self):
+    def album_id(self) -> int:
         return self.id
 
     @property
-    def title(self):
+    def title(self) -> str:
         """
         Название альбома. Получение/установка заголовка альбома с фото на сайте vk.com
         """
         return self.vk_data.title
 
     @title.setter
-    def title(self, new_title):
+    def title(self, new_title: str) -> None:
         if self._edit(title=new_title):
             self.vk_data.title = new_title
 
     @property
-    def description(self):
+    def description(self) -> str:
         """
         Описание альбома. Получение/установка заголовка альбома с фото на сайте vk.com
         """
@@ -138,15 +135,14 @@ class VKPhotoAlbum(VKobjectOwned):
         return self.vk_data.updated
 
     @property
-    def size(self):
+    def size(self) -> int:
         return self.vk_data.size
 
     @property
-    def like_index(self):
+    def like_index(self) -> int:
         if self.do_stat and self.size:
             return int(self.likes_count * 100.0 / self.size)
-        else:
-            return -1
+        return -1
 
     @property
     def likes_count(self) -> int:

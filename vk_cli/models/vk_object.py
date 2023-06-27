@@ -3,7 +3,7 @@ from abc import ABCMeta, abstractmethod
 from copy import copy
 from typing import Self
 
-from dacite import from_dict
+import dacite
 
 from .data.vk_object_data import VKObjectData, VKOwnedObjectData
 
@@ -11,13 +11,14 @@ from .data.vk_object_data import VKObjectData, VKOwnedObjectData
 class VKobject(metaclass=ABCMeta):
     vk_data_class = VKObjectData
     vk_object_type = None
+    vk_data: VKObjectData | None
 
     class InvalidObjectId(Exception):
         pass
 
     def __init__(self, string_or_object_id: int | str) -> None:
         self._id = None
-        self.vk_data: VKObjectData | None = None
+        self.vk_data = None
 
         if isinstance(string_or_object_id, int):
             self._id = string_or_object_id
@@ -27,7 +28,8 @@ class VKobject(metaclass=ABCMeta):
 
     @classmethod
     def from_data(cls, data: dict) -> Self:
-        pre = object.__new__(cls)
+        # pre = object.__new__(cls)
+        pre = cls('')
         pre._init_from_json(data)
         return pre
 
@@ -66,7 +68,7 @@ class VKobject(metaclass=ABCMeta):
         """
         raise NotImplementedError
 
-    def open(self) -> Self:
+    def load(self) -> Self:
         """
         Получение детальной информации по объекту из VK и инициализация vk_data
         """
@@ -76,9 +78,9 @@ class VKobject(metaclass=ABCMeta):
         return self
 
     def reload(self) -> None:
-        self.open()
+        self.load()
 
-    def _init_from_json(self, data) -> Self:
+    def _init_from_json(self, data: dict) -> Self:
         """
         Инициализация по данным JSON
         :param data: словарь с данными об объекте, полученный в результате запроса через API VK
@@ -97,7 +99,7 @@ class VKobject(metaclass=ABCMeta):
         if hasattr(self.vk_data_class.Meta, 'config'):
             kwargs['config'] = self.vk_data_class.Meta.config
 
-        self.vk_data = from_dict(**kwargs)
+        self.vk_data = dacite.from_dict(**kwargs)
 
         return self
 
@@ -105,18 +107,18 @@ class VKobject(metaclass=ABCMeta):
     def id(self) -> int:
         return self._id or self.vk_data and self.vk_data.id
 
-    def get_source_data(self):
+    def get_source_data(self) -> dict:
         return self.vk_data and self.vk_data.source
 
 
 class VKobjectOwned(VKobject, metaclass=ABCMeta):
     vk_data_class = VKOwnedObjectData
 
-    def __init__(self, string_id: str | None = None, owner_id: int | None = None, object_id: int | None = None) -> None:
-        super().__init__(string_id or object_id)
-
+    def __init__(self, string_id: str = None, owner_id: int = None, object_id: int = None) -> None:
+        self._owner_id = owner_id
         self.vk_data: VKOwnedObjectData | None = None
-        self._owner_id: int | None = self._owner_id or owner_id
+
+        super().__init__(string_id or object_id)
 
     def _init_from_string_id(self, str_id: str) -> None:
         if '_' in str_id:  # like '-38141560_168748493'
@@ -131,6 +133,7 @@ class VKobjectOwned(VKobject, metaclass=ABCMeta):
     @property
     def owner_id(self) -> int:
         return self._owner_id or self.vk_data.owner_id
+        # return self.vk_data.owner_id
 
     @property
     def string_id(self) -> str | None:
