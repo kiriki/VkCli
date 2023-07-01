@@ -2,4 +2,4 @@
 
 __version__ = '0.0.1-dev2'
 
-from .api.vk_credentials import VKCredentials
+from .api.vk_credentials import VK, VKCredentials

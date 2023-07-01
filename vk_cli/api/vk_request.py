@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import logging
+from datetime import time
 
 import requests
 
@@ -99,9 +100,7 @@ class VKRequest:
             else:
                 str_params[k] = v
 
-        str_params = {k: str(v).encode('utf-8') for k, v in str_params.items()}
-
-        return str_params
+        return {k: str(v).encode('utf-8') for k, v in str_params.items()}
 
     @property
     def url(self) -> str:
@@ -131,21 +130,18 @@ class VKRequest:
 
         while True:
             try:
-                resp = requests.post(self.url, data=self._str_prepared_parameters)
+                resp = requests.post(self.url, data=self._str_prepared_parameters, timeout=5)
                 resp.raise_for_status()
                 json_resp = resp.json()
                 try:
                     return json_resp['response']
-                except KeyError:
-                    raise VKApiErrorFactory.get_exception(json_resp.get('error') or json_resp)
+                except KeyError as e:
+                    raise VKApiErrorFactory.get_exception(json_resp.get('error') or json_resp) from e
 
-            except (VKETooFrequent, VKEInternal) as e:
+            except (VKETooFrequent, VKEInternal):
                 # если запросы отправляются слишком часто
-                import time
-
-                log.exception(e)
                 log.info('sleep for 1 sec')
-                time.sleep(1)
+                time.sleep(3)
 
             except VKECaptchaNeeded as e:
                 # требуется ввод кода с картинки
@@ -208,7 +204,7 @@ class PartialRequest(VKRequest):
             self.set_param('count', self.count)
             self.response = None
 
-    def __str__(self):
+    def __str__(self) -> str:
         res = f' [{self.response.count} items]' if self.is_invoked else ''
         return f'{self.method_name}: {self.method_params} \ninvoked = {self.is_invoked}{res}'
 
@@ -221,7 +217,7 @@ class VKCapchaR(VKRequest):
         self.capcha_url = ig_url
         self.answer_code = ''
 
-    def show(self):
+    def show(self) -> None:
         import webbrowser
 
         webbrowser.open(self.capcha_url)

@@ -1,7 +1,7 @@
 import importlib
 
 
-def get_params(local_vars):
+def get_params(local_vars: dict):
     params = {}
 
     for key, value in local_vars.items():

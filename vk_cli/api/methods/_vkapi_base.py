@@ -13,7 +13,7 @@ class VKApiBase(ABC):
         self.method_group = class_name.lower()[len(self.cls_name_prefix) :]
 
     @classmethod
-    def build_request(cls, method_name, local_vars) -> VKRequest:
+    def build_request(cls, method_name: str, local_vars: dict) -> VKRequest:
         """
         Формирование экземпляра VKRequest на основании имени метода и входных параметров
 
@@ -30,7 +30,7 @@ class VKApiBase(ABC):
 
 def raw_result(original_func):
     """
-    исходный результат выполнения сформированного запроса
+    Исходный результат выполнения сформированного запроса
 
     :param original_func:
     :return:
@@ -53,7 +53,7 @@ def build_request(method_name: str, with_model: str | None = None):
     :return: function
     """
 
-    def wp_dec(api_function):
+    def wp_dec(api_function, *aargs, **kkwargs):
         def wp_func(cls, **kwargs):
             request = cls.build_request(method_name, kwargs)
 

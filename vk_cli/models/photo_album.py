@@ -3,6 +3,7 @@ from pathlib import Path
 from typing import Self
 
 from vk_cli import api
+
 from . import VKPhoto
 from .data import PhotoAlbumData
 from .lister import ModelLister
@@ -16,7 +17,7 @@ class VKPhotoAlbum(VKobjectOwned):
     do_stat = False
     system_albums = {-6: '0', -7: '00', -15: '000'}
 
-    def __init__(self, string_id: str = None, object_id: int = None, owner_id: int = None) -> None:
+    def __init__(self, string_id: str | None = None, object_id: int | None = None, owner_id: int | None = None) -> None:
         super().__init__(string_id=string_id, owner_id=owner_id, object_id=object_id)
 
         self._likes_count = -1
@@ -25,20 +26,20 @@ class VKPhotoAlbum(VKobjectOwned):
         self.rev = False
 
     def _get_vk_data(self) -> dict:
-        # todo выделить в поле get_request?
+        # TODO выделить в поле get_request?
         request = api.photos.get_albums(owner_id=self.owner_id, album_ids=self.album_id)
         a = request.get_invoke_result()
         return a.single
 
     @classmethod
-    def create(cls, title: str, description: str = '', group_id: int = None) -> Self:
+    def create(cls, title: str, description: str = '', group_id: int | None = None) -> Self:
         """
         Создаёт новый пустой альбом для фотографий на сайте VK.com
         :param description: описание альбома
         :param title: название альбома
         :param group_id: идентификатор сообщества, в котором создаётся альбом
         """
-        # todo privacy
+        # TODO privacy
 
         request = api.photos.create_album(title=title, group_id=group_id, description=description)
         result = request.get_invoke_result()

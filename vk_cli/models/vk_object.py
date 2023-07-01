@@ -16,7 +16,7 @@ class VKobject(metaclass=ABCMeta):
     class InvalidObjectId(Exception):
         pass
 
-    def __init__(self, string_or_object_id: int | str) -> None:
+    def __init__(self, string_or_object_id: int | str | None = None) -> None:
         self._id = None
         self.vk_data = None
 
@@ -28,9 +28,8 @@ class VKobject(metaclass=ABCMeta):
 
     @classmethod
     def from_data(cls, data: dict) -> Self:
-        # pre = object.__new__(cls)
-        pre = cls('')
-        pre._init_from_json(data)
+        pre = cls(None)
+        pre._init_from_json(data)  # noqa:SLF001
         return pre
 
     def _init_from_string_id(self, str_id: str) -> None:
@@ -114,7 +113,7 @@ class VKobject(metaclass=ABCMeta):
 class VKobjectOwned(VKobject, metaclass=ABCMeta):
     vk_data_class = VKOwnedObjectData
 
-    def __init__(self, string_id: str = None, owner_id: int = None, object_id: int = None) -> None:
+    def __init__(self, string_id: str | None = None, owner_id: int | None = None, object_id: int | None = None) -> None:
         self._owner_id = owner_id
         self.vk_data: VKOwnedObjectData | None = None
 
@@ -133,7 +132,6 @@ class VKobjectOwned(VKobject, metaclass=ABCMeta):
     @property
     def owner_id(self) -> int:
         return self._owner_id or self.vk_data.owner_id
-        # return self.vk_data.owner_id
 
     @property
     def string_id(self) -> str | None:

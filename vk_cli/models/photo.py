@@ -42,12 +42,11 @@ class VKPhoto(VKobjectOwned):
         return {i.type: i for i in self.vk_data.sizes}
 
     def out_html(self) -> str:
-        rr = (
+        return (
             f'<a href="https://vk.com/photo{self.vk_data.owner_id}_{self.vk_data.id}">'
             f'<img src="{self.vk_data.photo_max}"><br />'
             '</a>\r\n'
         )
-        return rr
 
     def delete(self) -> None:
         """
@@ -95,7 +94,8 @@ class VKPhoto(VKobjectOwned):
             elif isinstance(size_fmt, tuple):
                 size = self.sizes.get(size_fmt[0]) or self.sizes.get('x')
             else:
-                raise TypeError('size_fmt None or tuple allowed ')
+                msg = 'size_fmt None or tuple allowed '
+                raise TypeError(msg)
             return size.url
 
         else:  # старый формат
@@ -104,11 +104,11 @@ class VKPhoto(VKobjectOwned):
             elif isinstance(size_fmt, tuple):
                 return getattr(self.vk_data, f'photo_{size_fmt[1]}', 'error')
             else:
-                raise TypeError('size_fmt None or tuple allowed ')
+                msg = 'size_fmt None or tuple allowed '
+                raise TypeError(msg)
 
     def get_comments_data(self):
-        comments_data = api.photos.get_comments(self.vk_data.id, owner_id=self.vk_data.owner_id, need_likes=True)
-        return comments_data
+        return api.photos.get_comments(self.vk_data.id, owner_id=self.vk_data.owner_id, need_likes=True)
 
     @property
     def date(self) -> datetime:

@@ -15,10 +15,9 @@ class VKError(Exception):
 
     @property
     def params(self):
-        pars = {a['key']: a['value'] for a in self.error['request_params']}
-        return pars
+        return {a['key']: a['value'] for a in self.error['request_params']}
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"Error(code = '{self.code}', description = '{self.description}', params = '{self.params}')"
 
 
@@ -29,7 +28,7 @@ class VKEAccessError(VKError):
         else:
             super().__init__(error_data)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"[{self.code}] {self.description} params = '{self.params}'"
 
 
