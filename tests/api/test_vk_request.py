@@ -1,126 +1,129 @@
-from unittest import TestCase, skip
 from unittest.mock import patch
+
+import pytest
 
 from tests.credentials import VK_CREDS
 from vk_cli.api import vk_const
 from vk_cli.api.vk_api_error import VKECaptchaNeeded
-from vk_cli.api.vk_credentials import VKCredentials
+from vk_cli.api.vk_credentials import VK
 from vk_cli.api.vk_request import VKRequest
 from vk_cli.api.vk_response import VKResponse
 
-VKCredentials.set(VK_CREDS)
+TEST_METHOD_NAME = 'method_class.method_name'
+
+params_dict = {
+    'owner_id': 111,
+    'album_id': 222,
+    'count': 33,
+    'offset': 44,
+    'extended': True,
+    'none_param': None,
+}
 
 
-class TestVKRequest(TestCase):
-    def setUp(self):
-        self.TEST_METHOD_NAME = 'method_class.method_name'
+@pytest.fixture
+def vk() -> VK:
+    return VK(**VK_CREDS)
 
-        self.request = VKRequest('account.getInfo')
 
-        self.r0 = VKRequest('account.getInfo', {'https_required': 1})
-        self.r1 = VKRequest('utils.getServerTime')
+@pytest.fixture
+def vk_request(vk: VK) -> VKRequest:
+    return VKRequest(vk, 'account.getInfo')
 
-        self.params_dict = {
-            'owner_id': 111,
-            'album_id': 222,
-            'count': 33,
-            'offset': 44,
-            'extended': True,
-            'none_param': None,
-        }
 
-    @patch('vk_cli.api.vk_request.VKRequest._do_invoke')
-    def test_invoke(self, do_invoke):
-        do_invoke.return_value = {}
-        self.request.invoke()
+@pytest.fixture
+def request_info2(vk: VK) -> VKRequest:  # r0
+    return VKRequest(vk, 'account.getInfo', {'https_required': 1})
 
-        assert self.request.is_invoked
-        assert isinstance(self.request.response, VKResponse)
 
-    @patch('vk_cli.api.vk_request.VKRequest._do_invoke')
-    def test_invoked(self, do_invoke):
-        request2 = self.request.invoked()
-        assert self.request is request2
-        assert request2.is_invoked
+@pytest.fixture
+def request_time(vk: VK) -> VKRequest:
+    return VKRequest(vk, 'utils.getServerTime')
 
-    @patch('vk_cli.api.vk_request.VKRequest._do_invoke')
-    def test_get_invoke_result(self, do_invoke):
-        do_invoke.return_value = [{'name': 'Name'}]
-        result = self.request.get_invoke_result()
 
-        assert self.request.is_invoked
-        assert isinstance(result, VKResponse)
+def test_invoke(vk_request: VKRequest) -> None:
+    with patch('vk_cli.api.vk_request.VKRequest._do_invoke', return_value={}):
+        vk_request.invoke()
 
-    @patch('vk_cli.api.vk_request.VKRequest._do_invoke')
-    def invoke_response(self, do_invoke):
-        do_invoke.return_value = '123'
-        request = VKRequest('utils.getServerTime')
+    assert vk_request.is_invoked
+    assert isinstance(vk_request.response, VKResponse)
+
+
+def test_invoked(vk_request: VKRequest) -> None:
+    with patch('vk_cli.api.vk_request.VKRequest._do_invoke', return_value={}):
+        request2 = vk_request.invoked()
+    assert vk_request is request2
+    assert request2.is_invoked
+
+
+def test_get_invoke_result(vk_request: VKRequest) -> None:
+    with patch('vk_cli.api.vk_request.VKRequest._do_invoke', return_value=[{'name': 'Name'}]):
+        result = vk_request.get_invoke_result()
+
+    assert vk_request.is_invoked
+    assert isinstance(result, VKResponse)
+
+
+def test_invoke_response(vk: VK) -> None:
+    with patch('vk_cli.api.vk_request.VKRequest._do_invoke', return_value='123') as do_invoke:
+        request = VKRequest(vk, 'utils.getServerTime')
         result = request.invoke_response()
 
-        assert result == '123'
-        do_invoke.assert_called_once()
+    assert result == '123'
+    do_invoke.assert_called_once()
 
-    def test_from_request(self):
-        new = VKRequest.from_request(self.request)
 
-        assert isinstance(new, VKRequest)
-        assert new != self.request
+def test_from_request(vk_request: VKRequest) -> None:
+    new = VKRequest.from_request(vk_request)
 
-        assert new.method_name == self.request.method_name
-        self.assertDictEqual(new.method_params, self.request.method_params)
+    assert isinstance(new, VKRequest)
+    assert new != vk_request
 
-    def test_params_empty(self):
-        assert self.request.method_params == {}
+    assert new.method_name == vk_request.method_name
+    assert new.method_params == vk_request.method_params
 
-    def test_params_kwargs(self):
-        request = VKRequest(self.TEST_METHOD_NAME, **self.params_dict)
-        assert request.method_params == self.params_dict
 
-    def test_params_dict(self):
-        request = VKRequest(self.TEST_METHOD_NAME, self.params_dict)
-        assert request.method_params == self.params_dict
+def test_params_empty(vk_request: VKRequest) -> None:
+    assert vk_request.method_params == {}
 
-    def test_params_dict_and_kwargs(self):
-        request = VKRequest(self.TEST_METHOD_NAME, {'param1': 1, 'param2': 2}, **self.params_dict)
-        assert request.method_params == {'param1': 1, 'param2': 2, **self.params_dict}
 
-    def test_set_param(self):
-        params_count_before = len(self.request.method_params)
-        self.request.set_param('test', 'value')
+def test_params_kwargs(vk: VK) -> None:
+    request = VKRequest(vk, TEST_METHOD_NAME, **params_dict)
+    assert request.method_params == params_dict
 
-        assert len(self.request.method_params) == params_count_before + 1
-        assert 'test' in self.request.method_params
-        assert self.request.method_params.get('test') == 'value'
 
-    def test_get_prepared_parameters(self):
-        request = VKRequest(self.TEST_METHOD_NAME, **self.params_dict)
-        prepared = request._prepared_parameters
+def test_params_dict(vk: VK) -> None:
+    request = VKRequest(vk, TEST_METHOD_NAME, params_dict)
+    assert request.method_params == params_dict
 
-        assert vk_const.ACCESS_TOKEN in prepared
-        assert vk_const.API_VERSION in prepared
 
-        for key in self.params_dict:
-            assert key in prepared
+def test_params_dict_and_kwargs(vk: VK) -> None:
+    request = VKRequest(vk, TEST_METHOD_NAME, {'param1': 1, 'param2': 2}, **params_dict)
+    assert request.method_params == {'param1': 1, 'param2': 2, **params_dict}
 
-    @skip('skipping')
-    def test_captcha(self):
-        r = VKRequest('captcha.force')
-        with self.assertRaises(VKECaptchaNeeded):
-            r.invoke_response()
 
-    @skip('skipping')
-    @patch('vk_cli.api.vk_request.VKRequest._do_invoke')
-    def test_invoke1(self, _do_invoke):
-        _do_invoke.return_value = [{'last_name': 'Дуров'}]
+def test_set_param(vk_request: VKRequest) -> None:
+    params_count_before = len(vk_request.method_params)
+    vk_request.set_param('test', 'value')
 
-        request = VKRequest('users.get', uids='1,2', fields='education')
-        res = request.invoke_response()
-        print(res)
+    assert len(vk_request.method_params) == params_count_before + 1
+    assert 'test' in vk_request.method_params
+    assert vk_request.method_params.get('test') == 'value'
 
-        _do_invoke.assert_called_once_with('users.get', uids='1,5', fields='education')
 
-    @skip('skipping')
-    def test_invoke2(self):
-        params = {'user_ids': '1,5,10'}
-        rr = VKRequest('users.get', **params).invoke_response()
-        print(rr)
+def test_get_prepared_parameters(vk: VK) -> None:
+    request = VKRequest(vk, TEST_METHOD_NAME, **params_dict)
+    prepared = request._prepared_parameters
+
+    assert vk_const.ACCESS_TOKEN in prepared
+    assert vk_const.API_VERSION in prepared
+
+    for key in params_dict:
+        assert key in prepared
+
+
+@pytest.mark.skip('skipping')
+def test_captcha(vk: VK) -> None:
+    r = VKRequest(vk, 'captcha.force')
+    with pytest.raises(VKECaptchaNeeded):
+        r.invoke_response()
