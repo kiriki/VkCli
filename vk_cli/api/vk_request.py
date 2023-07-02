@@ -1,7 +1,8 @@
 from __future__ import annotations
 
 import logging
-from datetime import time
+import time
+from typing import TYPE_CHECKING, Any
 
 import requests
 
@@ -14,8 +15,10 @@ from .vk_api_error import (
     VKETooFrequent,
     VKError,
 )
-from .vk_credentials import VKCredentials
 from .vk_response import VKResponse
+
+if TYPE_CHECKING:
+    from .vk_credentials import VK, VKCredentials
 
 log = logging.getLogger(__name__)
 
@@ -23,9 +26,9 @@ log = logging.getLogger(__name__)
 class VKRequest:
     URL_BASE = 'https://api.vk.com/method/'
     attempts = 1  # By default, there is 1 attempt for loading
-    credentials = VKCredentials
 
-    def __init__(self, method_name: str | None = None, parameters: dict | None = None, **pars) -> None:
+    def __init__(self, vk: VK, method_name: str | None = None, parameters: dict | None = None, **pars) -> None:
+        self._vk = vk
         self.method_name = method_name
         self.method_params = parameters or {}
         self.method_params = {**self.method_params, **pars}
@@ -36,14 +39,15 @@ class VKRequest:
 
     @classmethod
     def from_request(cls, request: VKRequest) -> VKRequest:
-        pre = cls(method_name=None)
+        pre = cls(None)
         pre._init_from_request(request)
         return pre
 
-    def _init_from_request(self, request):
+    def _init_from_request(self, request: VKRequest) -> None:
         from copy import deepcopy
 
-        self.__dict__ = deepcopy(request.__dict__)
+        self.__dict__.update(deepcopy(request.__dict__))
+        assert self._vk is not None, f"is required to set 'vk' value for class '{self.__class__.__name__}'"
 
     def __str__(self) -> str:
         inv = ('stub', 'invoked')[self.is_invoked]
@@ -53,6 +57,10 @@ class VKRequest:
         return f'{self.method_name}({self.method_params}) [{inv}] {binding}'
 
     @property
+    def _credentials(self) -> VKCredentials:
+        return self._vk.credentials
+
+    @property
     def is_binded(self) -> bool:
         return self.binded_model is not None
 
@@ -60,7 +68,7 @@ class VKRequest:
     def is_invoked(self) -> bool:
         return self.response is not None
 
-    def set_param(self, param, value):
+    def set_param(self, param: str, value: Any) -> None:
         self.method_params[param] = value
 
     @property
@@ -68,15 +76,15 @@ class VKRequest:
         if self._method_params_prepared is None:
             self._method_params_prepared = self.method_params.copy()
 
-            if self.credentials.access_token is not None:
-                self._method_params_prepared[vk_const.ACCESS_TOKEN] = self.credentials.access_token
+            if self._credentials.access_token is not None:
+                self._method_params_prepared[vk_const.ACCESS_TOKEN] = self._credentials.access_token
 
             # Set actual version of API
-            self._method_params_prepared[vk_const.API_VERSION] = self.credentials.api_version
+            self._method_params_prepared[vk_const.API_VERSION] = self._credentials.api_version
 
             # Set preferred language for request
-            if self.credentials.lang:
-                self._method_params_prepared[vk_const.LANG] = self.credentials.lang
+            if self._credentials.lang:
+                self._method_params_prepared[vk_const.LANG] = self._credentials.lang
 
         return self._method_params_prepared
 
@@ -141,6 +149,7 @@ class VKRequest:
             except (VKETooFrequent, VKEInternal):
                 # если запросы отправляются слишком часто
                 log.info('sleep for 1 sec')
+
                 time.sleep(3)
 
             except VKECaptchaNeeded as e:

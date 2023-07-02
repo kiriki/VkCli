@@ -1,7 +1,9 @@
 **vk_cli** – vk.com API wrapper
 
+### Photos getting
+
 ```python
-from vk_cli import VKCredentials
+from vk_cli import VK
 from vk_cli.models import VKPhotoAlbum
 
 credentials = {
@@ -9,9 +11,9 @@ credentials = {
     'access_token': '<token>'
 }
 
-VKCredentials.set(credentials)
+vk = VK(**credentials)
 
-album = VKPhotoAlbum(owner_id=1, object_id=-7).load()
+album = VKPhotoAlbum(vk, owner_id=1, object_id=-7).load()
 print(album)
 
 album.download(dl_path='/home/user/tmp/vkdls')

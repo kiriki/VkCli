@@ -2,7 +2,7 @@ from collections.abc import Iterator
 from pathlib import Path
 from typing import Self
 
-from vk_cli import api
+from vk_cli import api, VK
 
 from . import VKPhoto
 from .data import PhotoAlbumData
@@ -17,9 +17,11 @@ class VKPhotoAlbum(VKobjectOwned):
     do_stat = False
     system_albums = {-6: '0', -7: '00', -15: '000'}
 
-    def __init__(self, string_id: str | None = None, object_id: int | None = None, owner_id: int | None = None) -> None:
+    def __init__(self, vk: VK, string_id: str | None = None, object_id: int | None = None,
+                 owner_id: int | None = None) -> None:
         super().__init__(string_id=string_id, owner_id=owner_id, object_id=object_id)
 
+        self._vk = vk
         self._likes_count = -1
         self._privacy_view = None
         self._privacy_comment = None
@@ -27,7 +29,7 @@ class VKPhotoAlbum(VKobjectOwned):
 
     def _get_vk_data(self) -> dict:
         # TODO выделить в поле get_request?
-        request = api.photos.get_albums(owner_id=self.owner_id, album_ids=self.album_id)
+        request = api.photos.get_albums(self._vk, owner_id=self.owner_id, album_ids=self.album_id)
         a = request.get_invoke_result()
         return a.single
 
@@ -54,7 +56,8 @@ class VKPhotoAlbum(VKobjectOwned):
 
     @property
     def photos(self) -> ModelLister:
-        request = api.photos.get(owner_id=self.owner_id, album_id=self.album_id, rev=self.rev)
+        assert (self._vk is not None), 'vk is None'
+        request = api.photos.get(self._vk, owner_id=self.owner_id, album_id=self.album_id, rev=self.rev)
         return ModelLister(request, step=500)
 
     @property

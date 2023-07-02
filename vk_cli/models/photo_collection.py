@@ -1,6 +1,6 @@
 import logging
 
-from vk_cli import api as vkapi
+from vk_cli import api as vkapi, VK
 from vk_cli.api.vk_api_error import VKEAccessError
 from vk_cli.models import ModelLister
 
@@ -15,7 +15,8 @@ class PhotoCollection:
     * todo: uploading, editing photos
     """
 
-    def __init__(self, owner_id: int) -> None:
+    def __init__(self, vk: VK, owner_id: int) -> None:
+        self._vk = vk
         self.owner_id = owner_id
         self._albums = []
 
@@ -25,9 +26,9 @@ class PhotoCollection:
     @property
     def albums(self) -> ModelLister:
         """
-        Генератор для получения всех фотоальбомов пользователя или сообщества
+        Generator for getting all photos albums for the current user or group
         """
-        request = vkapi.photos.get_albums(owner_id=self.owner_id, need_system=True, album_ids=-7)
+        request = vkapi.photos.get_albums(self._vk, owner_id=self.owner_id, need_system=True, album_ids=-7)
         return ModelLister(request)
 
     @property
@@ -35,7 +36,7 @@ class PhotoCollection:
         """
         Generator for getting all available photos for the current user or group
         """
-        request = vkapi.photos.get_all(owner_id=self.owner_id)
+        request = vkapi.photos.get_all(self._vk, owner_id=self.owner_id)
         return ModelLister(request)
 
     @property
@@ -53,7 +54,7 @@ class PhotoCollection:
             # for photo in ModelLister(request):
             #     yield photo
         except VKEAccessError:
-            log.error('Access denied. This user doesn\'t show his tagged photos')
+            log.error("Access denied. This user doesn't show his tagged photos")
 
     @property
     def tags_new(self):
@@ -62,7 +63,7 @@ class PhotoCollection:
         """
         if self.owner_id != VKApi.current_user_id:
             log.info('tagged photos only for current user')
-            return None
+            return
 
     def create_album(self, title: str, description: str = '') -> None:
         """

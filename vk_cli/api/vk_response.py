@@ -68,7 +68,7 @@ class VKResponse:
         if not isinstance(data, dict):
             raise StopIteration
 
-        return self.request.binded_model.from_data(data=data)
+        return self.request.binded_model.from_data(vk=self.request._vk, data=data)
 
     @property
     def array(self) -> list[VKobject]:

@@ -48,14 +48,14 @@ class VKApiPhotos(VKApiBase):
     @raw_result
     # @with_model('vk_cli.models.VKModel')
     def create_album(
-        cls,
-        title: str,
-        group_id: int | None = None,
-        description: str | None = None,
-        privacy_view: str | None = None,
-        privacy_comment: str | None = None,
-        upload_by_admins_only: bool | None = None,
-        comments_disabled: bool | None = None,
+            cls,
+            title: str,
+            group_id: int | None = None,
+            description: str | None = None,
+            privacy_view: str | None = None,
+            privacy_comment: str | None = None,
+            upload_by_admins_only: bool | None = None,
+            comments_disabled: bool | None = None,
     ):
         """
         Создает пустой альбом для фотографий.
@@ -92,16 +92,16 @@ class VKApiPhotos(VKApiBase):
     @raw_result
     # @with_model('vk_cli.models.VKModel')
     def create_comment(
-        cls,
-        photo_id: int,
-        owner_id: int | None = None,
-        message: str | None = None,
-        attachments: str | None = None,
-        from_group: bool | None = None,
-        reply_to_comment: int | None = None,
-        sticker_id: int | None = None,
-        access_key: str | None = None,
-        guid: str | None = None,
+            cls,
+            photo_id: int,
+            owner_id: int | None = None,
+            message: str | None = None,
+            attachments: str | None = None,
+            from_group: bool | None = None,
+            reply_to_comment: int | None = None,
+            sticker_id: int | None = None,
+            access_key: str | None = None,
+            guid: str | None = None,
     ):
         """
         Создает новый комментарий к фотографии.
@@ -188,15 +188,15 @@ class VKApiPhotos(VKApiBase):
     @raw_result
     # @with_model('vk_cli.models.VKModel')
     def edit(
-        cls,
-        photo_id: int,
-        owner_id: int | None = None,
-        caption: str | None = None,
-        latitude: object | None = None,
-        longitude: object | None = None,
-        place_str: str | None = None,
-        foursquare_id: str | None = None,
-        delete_place: bool | None = None,
+            cls,
+            photo_id: int,
+            owner_id: int | None = None,
+            caption: str | None = None,
+            latitude: object | None = None,
+            longitude: object | None = None,
+            place_str: str | None = None,
+            foursquare_id: str | None = None,
+            delete_place: bool | None = None,
     ):
         """
         Редактирует описание или геометку у фотографии.
@@ -221,15 +221,15 @@ class VKApiPhotos(VKApiBase):
     @raw_result
     # @with_model('vk_cli.models.VKModel')
     def edit_album(
-        cls,
-        album_id: int,
-        title: str | None = None,
-        description: str | None = None,
-        owner_id: int | None = None,
-        privacy_view: str | None = None,
-        privacy_comment: str | None = None,
-        upload_by_admins_only: bool | None = None,
-        comments_disabled: bool | None = None,
+            cls,
+            album_id: int,
+            title: str | None = None,
+            description: str | None = None,
+            owner_id: int | None = None,
+            privacy_view: str | None = None,
+            privacy_comment: str | None = None,
+            upload_by_admins_only: bool | None = None,
+            comments_disabled: bool | None = None,
     ):
         """
         Редактирует данные альбома для фотографий.
@@ -261,11 +261,11 @@ class VKApiPhotos(VKApiBase):
     @raw_result
     # @with_model('vk_cli.models.VKModel')
     def edit_comment(
-        cls,
-        comment_id: int,
-        owner_id: int | None = None,
-        message: str | None = None,
-        attachments: str | None = None,
+            cls,
+            comment_id: int,
+            owner_id: int | None = None,
+            message: str | None = None,
+            attachments: str | None = None,
     ):
         """
         Изменяет текст комментария к фотографии.
@@ -295,19 +295,19 @@ class VKApiPhotos(VKApiBase):
         return cls.build_request('editComment', locals())
 
     @classmethod
-    @build_request('get', with_model='VKPhoto')
+    @build_request('get', model_name='VKPhoto')
     def get(
-        cls,
-        owner_id: int | None = None,
-        album_id: int | str | None = None,
-        photo_ids: str | None = None,
-        rev: bool | None = None,
-        extended: bool | None = None,
-        feed_type: str | None = None,
-        feed: int | None = None,
-        photo_sizes: bool | None = None,
-        offset: int | None = None,
-        count: int | None = None,
+            cls,
+            owner_id: int | None = None,
+            album_id: int | str | None = None,
+            photo_ids: str | None = None,
+            rev: bool | None = None,
+            extended: bool | None = None,
+            feed_type: str | None = None,
+            feed: int | None = None,
+            photo_sizes: bool | None = None,
+            offset: int | None = None,
+            count: int | None = None,
     ):
         """
         Возвращает список фотографий в альбоме.
@@ -348,16 +348,16 @@ class VKApiPhotos(VKApiBase):
         """
 
     @classmethod
-    @build_request('getAlbums', with_model='VKPhotoAlbum')
+    @build_request('getAlbums', model_name='VKPhotoAlbum')
     def get_albums(
-        cls,
-        owner_id: int | None = None,
-        album_ids: object | None = None,
-        offset: int | None = None,
-        count: int | None = None,
-        need_system: bool | None = None,
-        need_covers: bool | None = None,
-        photo_sizes: bool | None = None,
+            cls,
+            owner_id: int | None = None,
+            album_ids: object | None = None,
+            offset: int | None = None,
+            count: int | None = None,
+            need_system: bool | None = None,
+            need_covers: bool | None = None,
+            photo_sizes: bool | None = None,
     ) -> VKRequest:
         """
         https://vk.com/dev/photos.getAlbums
@@ -378,7 +378,7 @@ class VKApiPhotos(VKApiBase):
                 фотографий. Может принимать значения **1** или **0**
         :param need_covers: *1* — будет возвращено дополнительное поле **thumb_src** с адресом изображения-обложки. По
             умолчанию поле **thumb_src** не возвращается. Может принимать значения **1** или **0**
-        :param photo_sizes: *1* — размеры фотографий будут возвращены  в специальном формате. Может принимать значения
+        :param photo_sizes: *1* — размеры фотографий будут возвращены в специальном формате. Может принимать значения
             **1** или **0**
         """
 
@@ -397,17 +397,17 @@ class VKApiPhotos(VKApiBase):
         return cls.build_request('getAlbumsCount', locals())
 
     @classmethod
-    @build_request('getAll', with_model='VKPhoto')
+    @build_request('getAll', model_name='VKPhoto')
     def get_all(
-        cls,
-        owner_id: int | None = None,
-        extended: bool | None = None,
-        offset: int | None = None,
-        count: int | None = None,
-        photo_sizes: bool | None = None,
-        no_service_albums: bool | None = None,
-        need_hidden: bool | None = None,
-        skip_hidden: bool | None = None,
+            cls,
+            owner_id: int | None = None,
+            extended: bool | None = None,
+            offset: int | None = None,
+            count: int | None = None,
+            photo_sizes: bool | None = None,
+            no_service_albums: bool | None = None,
+            need_hidden: bool | None = None,
+            skip_hidden: bool | None = None,
     ):
         """
         https://vk.com/dev/photos.getAll
@@ -449,12 +449,12 @@ class VKApiPhotos(VKApiBase):
     @raw_result
     # @with_model('vk_cli.models.VKModel')
     def get_all_comments(
-        cls,
-        owner_id: int | None = None,
-        album_id: int | None = None,
-        need_likes: bool | None = None,
-        offset: int | None = None,
-        count: int | None = None,
+            cls,
+            owner_id: int | None = None,
+            album_id: int | None = None,
+            need_likes: bool | None = None,
+            offset: int | None = None,
+            count: int | None = None,
     ):
         """
         Возвращает отсортированный в антихронологическом порядке список всех комментариев к конкретному альбому или ко
@@ -484,7 +484,7 @@ class VKApiPhotos(VKApiBase):
         return cls.build_request('getAllComments', locals())
 
     @classmethod
-    @build_request('getById', with_model='VKPhoto')
+    @build_request('getById', model_name='VKPhoto')
     def get_by_id(cls, photos: str, extended: bool | None = None, photo_sizes: bool | None = None) -> VKRequest:
         """
         Возвращает информацию о фотографиях по их идентификаторам.
@@ -520,11 +520,11 @@ class VKApiPhotos(VKApiBase):
     @raw_result
     # @with_model('vk_cli.models.VKModel')
     def get_chat_upload_server(
-        cls,
-        chat_id: int,
-        crop_x: int | None = None,
-        crop_y: int | None = None,
-        crop_width: int | None = None,
+            cls,
+            chat_id: int,
+            crop_x: int | None = None,
+            crop_y: int | None = None,
+            crop_width: int | None = None,
     ):
         """
         Позволяет получить адрес для загрузки обложки чата.
@@ -541,17 +541,17 @@ class VKApiPhotos(VKApiBase):
     @raw_result
     # @with_model('vk_cli.models.VKModel')
     def get_comments(
-        cls,
-        photo_id: int,
-        owner_id: int | None = None,
-        need_likes: bool | None = None,
-        start_comment_id: int | None = None,
-        offset: int | None = None,
-        count: int | None = None,
-        sort: str | None = None,
-        access_key: str | None = None,
-        extended: bool | None = None,
-        fields: str | None = None,
+            cls,
+            photo_id: int,
+            owner_id: int | None = None,
+            need_likes: bool | None = None,
+            start_comment_id: int | None = None,
+            offset: int | None = None,
+            count: int | None = None,
+            sort: str | None = None,
+            access_key: str | None = None,
+            extended: bool | None = None,
+            fields: str | None = None,
     ):
         """
         Возвращает список комментариев к фотографии.
@@ -613,12 +613,12 @@ class VKApiPhotos(VKApiBase):
     @raw_result
     # @with_model('vk_cli.models.VKModel')
     def get_market_upload_server(
-        cls,
-        group_id: int,
-        main_photo: bool | None = None,
-        crop_x: int | None = None,
-        crop_y: int | None = None,
-        crop_width: int | None = None,
+            cls,
+            group_id: int,
+            main_photo: bool | None = None,
+            crop_x: int | None = None,
+            crop_y: int | None = None,
+            crop_width: int | None = None,
     ):
         """
         Возвращает адрес сервера для загрузки фотографии товара.
@@ -668,12 +668,12 @@ class VKApiPhotos(VKApiBase):
     @raw_result
     # @with_model('vk_cli.models.VKModel')
     def get_owner_cover_photo_upload_server(
-        cls,
-        group_id: int,
-        crop_x: int | None = None,
-        crop_y: int | None = None,
-        crop_x2: int | None = None,
-        crop_y2: int | None = None,
+            cls,
+            group_id: int,
+            crop_x: int | None = None,
+            crop_y: int | None = None,
+            crop_x2: int | None = None,
+            crop_y2: int | None = None,
     ):
         """
         Получает адрес для загрузки обложки сообщества.
@@ -744,12 +744,12 @@ class VKApiPhotos(VKApiBase):
     @raw_result
     # @with_model('vk_cli.models.VKModel')
     def get_user_photos(
-        cls,
-        user_id: int | None = None,
-        offset: int | None = None,
-        count: int | None = None,
-        extended: bool | None = None,
-        sort: str | None = None,
+            cls,
+            user_id: int | None = None,
+            offset: int | None = None,
+            count: int | None = None,
+            extended: bool | None = None,
+            sort: str | None = None,
     ):
         """
         Возвращает список фотографий, на которых отмечен пользователь
@@ -824,14 +824,14 @@ class VKApiPhotos(VKApiBase):
     @raw_result
     # @with_model('vk_cli.models.VKModel')
     def put_tag(
-        cls,
-        photo_id: int,
-        user_id: int,
-        owner_id: int | None = None,
-        x: object | None = None,
-        y: object | None = None,
-        x2: object | None = None,
-        y2: object | None = None,
+            cls,
+            photo_id: int,
+            user_id: int,
+            owner_id: int | None = None,
+            x: object | None = None,
+            y: object | None = None,
+            x2: object | None = None,
+            y2: object | None = None,
     ):
         """
         Добавляет отметку на фотографию.
@@ -869,11 +869,11 @@ class VKApiPhotos(VKApiBase):
     @raw_result
     # @with_model('vk_cli.models.VKModel')
     def reorder_albums(
-        cls,
-        album_id: int,
-        owner_id: int | None = None,
-        before: int | None = None,
-        after: int | None = None,
+            cls,
+            album_id: int,
+            owner_id: int | None = None,
+            before: int | None = None,
+            after: int | None = None,
     ):
         """
         Меняет порядок альбома в списке альбомов пользователя.
@@ -893,11 +893,11 @@ class VKApiPhotos(VKApiBase):
     @raw_result
     # @with_model('vk_cli.models.VKModel')
     def reorder_photos(
-        cls,
-        photo_id: int,
-        owner_id: int | None = None,
-        before: int | None = None,
-        after: int | None = None,
+            cls,
+            photo_id: int,
+            owner_id: int | None = None,
+            before: int | None = None,
+            after: int | None = None,
     ):
         """
         Меняет порядок фотографии в списке фотографий альбома пользователя.
@@ -994,15 +994,15 @@ class VKApiPhotos(VKApiBase):
     @raw_result
     # @with_model('vk_cli.models.VKModel')
     def save(
-        cls,
-        album_id: int | None = None,
-        group_id: int | None = None,
-        server: int | None = None,
-        photos_list: str | None = None,
-        hash_: str | None = None,
-        latitude: object | None = None,
-        longitude: object | None = None,
-        caption: str | None = None,
+            cls,
+            album_id: int | None = None,
+            group_id: int | None = None,
+            server: int | None = None,
+            photos_list: str | None = None,
+            hash_: str | None = None,
+            latitude: object | None = None,
+            longitude: object | None = None,
+            caption: str | None = None,
     ):
         """
         Сохраняет фотографии после успешной загрузки.
@@ -1039,13 +1039,13 @@ class VKApiPhotos(VKApiBase):
     @raw_result
     # @with_model('vk_cli.models.VKModel')
     def save_market_photo(
-        cls,
-        photo: str,
-        server: int,
-        hash_: str,
-        group_id: int | None = None,
-        crop_data: str | None = None,
-        crop_hash: str | None = None,
+            cls,
+            photo: str,
+            server: int,
+            hash_: str,
+            group_id: int | None = None,
+            crop_data: str | None = None,
+            crop_hash: str | None = None,
     ):
         """
         Сохраняет фотографии после успешной загрузки на URI, полученный методом photos.getMarketUploadServer.
@@ -1114,15 +1114,15 @@ class VKApiPhotos(VKApiBase):
     @raw_result
     # @with_model('vk_cli.models.VKModel')
     def save_wall_photo(
-        cls,
-        photo: str,
-        user_id: int | None = None,
-        group_id: int | None = None,
-        server: int | None = None,
-        hash_: str | None = None,
-        latitude: object | None = None,
-        longitude: object | None = None,
-        caption: str | None = None,
+            cls,
+            photo: str,
+            user_id: int | None = None,
+            group_id: int | None = None,
+            server: int | None = None,
+            hash_: str | None = None,
+            latitude: object | None = None,
+            longitude: object | None = None,
+            caption: str | None = None,
     ):
         """
         Сохраняет фотографии после успешной загрузки на URI, полученный методом photos.getWallUploadServer.
@@ -1143,16 +1143,16 @@ class VKApiPhotos(VKApiBase):
     @raw_result
     # @with_model('vk_cli.models.VKModel')
     def search(
-        cls,
-        q: str | None = None,
-        lat: object | None = None,
-        long: object | None = None,
-        start_time: int | None = None,
-        end_time: int | None = None,
-        sort: int | None = None,
-        offset: int | None = None,
-        count: int | None = None,
-        radius: int | None = None,
+            cls,
+            q: str | None = None,
+            lat: object | None = None,
+            long: object | None = None,
+            start_time: int | None = None,
+            end_time: int | None = None,
+            sort: int | None = None,
+            offset: int | None = None,
+            count: int | None = None,
+            radius: int | None = None,
     ):
         """
         Осуществляет поиск изображений по местоположению или описанию.

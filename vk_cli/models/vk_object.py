@@ -1,11 +1,16 @@
+from __future__ import annotations
+
 import html
 from abc import ABCMeta, abstractmethod
 from copy import copy
-from typing import Self
+from typing import Self, TYPE_CHECKING
 
 import dacite
 
 from .data.vk_object_data import VKObjectData, VKOwnedObjectData
+
+if TYPE_CHECKING:
+    from .. import VK
 
 
 class VKobject(metaclass=ABCMeta):
@@ -27,8 +32,9 @@ class VKobject(metaclass=ABCMeta):
             self._init_from_string_id(string_or_object_id)
 
     @classmethod
-    def from_data(cls, data: dict) -> Self:
+    def from_data(cls, vk: VK, data: dict) -> Self:
         pre = cls(None)
+        pre._vk = vk
         pre._init_from_json(data)  # noqa:SLF001
         return pre
 
